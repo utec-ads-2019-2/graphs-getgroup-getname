@@ -1,0 +1,5 @@
+.idea/
+Building/
+CMakeLists.txt
+cmake-build-debug/
+conanfile.txt

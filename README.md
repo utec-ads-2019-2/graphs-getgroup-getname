@@ -1,5 +1,5 @@
 # graphs-getgroup-getname
-###Integrantes
+### Integrantes  
 -Fabrizio Franco  
 -Jeanlee Barreto  
 -Johan Tanta

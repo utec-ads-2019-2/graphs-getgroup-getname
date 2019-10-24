@@ -1,0 +1,10 @@
+#ifndef GRAPHS_GETGROUP_GETNAME_GRAFO_NO_DIRIGIDO_H
+#define GRAPHS_GETGROUP_GETNAME_GRAFO_NO_DIRIGIDO_H
+
+#include "Grafo.cpp"
+class Grafo_no_dirigido : public Grafo{
+
+};
+
+
+#endif //GRAPHS_GETGROUP_GETNAME_GRAFO_NO_DIRIGIDO_H

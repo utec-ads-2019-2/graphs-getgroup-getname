@@ -1,10 +1,6 @@
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
 #include <iostream>
 #include "Clases/Grafos/Grafo.h"
 #include "Clases/Airports/AirportParser.h"
-using namespace rapidjson;
 
 int main() {
     // 1. Parse a JSON string into DOM.
@@ -24,6 +20,6 @@ int main() {
     // Output {"project":"rapidjson","stars":11}
     std::cout << buffer.GetString() << std::endl;
 
-
+    AirportParser parser("../json_files/airports_mini.json");
     return 0;
 }

@@ -1,7 +1,7 @@
 #ifndef GRAPHS_GETGROUP_GETNAME_ARISTA_DIRIGIDA_H
 #define GRAPHS_GETGROUP_GETNAME_ARISTA_DIRIGIDA_H
 
-#include "Arista.cpp"
+#include "Arista.h"
 
 class Arista_dirigida: public Arista{
 

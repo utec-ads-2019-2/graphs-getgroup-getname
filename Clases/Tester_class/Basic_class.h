@@ -6,6 +6,7 @@
 
 class String_class{
     string Name;
+
 public:
     typedef Arista_no_dirigida Edge_type;
     explicit String_class(string name) : Name(std::move(name)) {}

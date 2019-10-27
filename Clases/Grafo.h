@@ -2,6 +2,7 @@
 #define GRAPHS_GETGROUP_GETNAME_GRAFO_H
 #include <map>
 #include "Vertice.h"
+#include "Aristas/Arista_dirigida.h"
 using namespace std;
 
 
@@ -13,14 +14,25 @@ public:
 
 
 private:
-    map<string,Vertice<Node_type>> Self;
+    map<string,Vertice<Node_type>*> Self;
 
 public:
-    explicit Grafo( map<string,Vertice<Node_type>> self) : Self(self) {}
+    explicit Grafo( map<string,Vertice<Node_type>*> self) : Self(self) {
+    }
 
-    map<string, Vertice<Node_type>>&getSelf() {
+    map<string, Vertice<Node_type>*>&getSelf() {
         return Self;
     }
+
+    void Prim(){
+        if(typeid(Edge_type)== typeid(Arista_dirigida))
+            throw runtime_error("El algoritmo no puede ser aplicado en Grafos dirigidos");
+        else{
+
+        }
+    }
+
+
 };
 
 

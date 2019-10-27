@@ -34,6 +34,12 @@ public:
         return (*setUnitario)[0].empty();
     }
 
+    void restartVector(vector<string>*& setUnitario){
+        setUnitario->clear();
+        delete setUnitario;
+        setUnitario = new vector<string>(1);
+    }
+
 
     void Prim(){
         string verticeArbitrario;
@@ -60,7 +66,7 @@ public:
                     aristasPosibles.emplace(ListaAdy[i]->getParId(), ListaAdy[i]->getWeight());
                 }
                 if(pesoMim != aristasPosibles.end()) aristasPosibles.erase(pesoMim);
-                    //First Edge
+
                 do {
                     pesoMim = aristasPosibles.begin();
                     for (auto item = aristasPosibles.begin(); item != aristasPosibles.end(); ++item) {
@@ -76,9 +82,8 @@ public:
                 printEdge((*pesoMim).first);
 
                 it = Self.find((*setUnitario)[0]);
-                setUnitario->clear();
-                delete setUnitario;
-                setUnitario = new vector<string>(1);
+
+                restartVector(setUnitario);
 
                 verticesInMST.insert((*pesoMim).first.begin(), (*pesoMim).first.end());
                 }

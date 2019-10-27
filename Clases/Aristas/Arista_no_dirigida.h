@@ -10,6 +10,25 @@ class Arista_no_dirigida{
 public:
     Arista_no_dirigida(string firstId, string secondId, double weight) : first_id(std::move(firstId)), second_id(std::move(secondId)),
                                                                    weight(weight) {}
+    set<string> getParId(){
+        set<string> parID;
+
+        parID.insert(first_id);
+        parID.insert(second_id);
+
+        return parID;
+    }
+    const string &getFirstId() const {
+        return first_id;
+    }
+
+    const string &getSecondId() const {
+        return second_id;
+    }
+
+    double getWeight() const {
+        return weight;
+    }
 };
 
 

@@ -45,7 +45,9 @@ public:
         else{
             auto arista=new Edge_type(ID_1,ID_2,weight);
             getSelf()[ID_1]->Lista_de_adyacencia.push_back(arista);
-            getSelf()[ID_2]->Lista_de_adyacencia.push_back(arista); }
+            if(typeid(Edge_type)!= typeid(Arista_dirigida))
+                getSelf()[ID_2]->Lista_de_adyacencia.push_back(arista);
+        }
     }
 
     void Agregar_Arista(const string& ID_1,const string& ID_2){
@@ -57,8 +59,19 @@ public:
 
             auto arista=new Edge_type(ID_1,ID_2,Node_type::Calculate_weight(*Self_1,*Self_2));
             getSelf()[ID_1]->Lista_de_adyacencia.push_back(arista);
-            getSelf()[ID_2]->Lista_de_adyacencia.push_back(arista); }
+            if(typeid(Edge_type)!= typeid(Arista_dirigida))
+                getSelf()[ID_2]->Lista_de_adyacencia.push_back(arista);  }
     }
+
+
+    bool Find_edge(string first_id, string  second_id){
+
+    }
+
+    bool Find_Vertex(string Id_vertex){
+        return (Self.find(Id_vertex)!=Self.end());
+    }
+
 
 
     void Prim(const string& verticeArbitrario){

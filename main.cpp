@@ -15,7 +15,6 @@ int main() {
     Grafo_1.Agregar_Arista("F","2");
 
 
-
     auto Grafo_2=Parser_2.Generate_Graph();
     Grafo_2.Prim();
     Grafo_2.Agregar_Vertice("F",String_class("F"));

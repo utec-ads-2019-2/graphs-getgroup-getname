@@ -189,8 +189,6 @@ public:
     }
 
 
-
-
     void Kruskal(){
         if(is_directed)
             //throw runtime_error("Kruskal no puede ser aplicado en Grafos dirigidos");

@@ -26,10 +26,10 @@ public:
             int Id=stoi((*itr)["Id"].GetString());
 
 
-            const Value& a = (*itr)["destinations"]; vector<Arista_dirigida*> aristas;
+            const Value& a = (*itr)["destinations"]; vector<Arista*> aristas;
 
             for (SizeType i = 0; i < a.Size(); i++){
-                auto arista= new Arista_dirigida((*itr)["Id"].GetString(),a[i].GetString());
+                auto arista= new Arista((*itr)["Id"].GetString(), a[i].GetString());
                 aristas.push_back(arista);
             }
 
@@ -47,7 +47,7 @@ public:
         }
 
 
-        Grafo<Airport> Grafo1(Map_for_graph);
+        Grafo<Airport> Grafo1(Map_for_graph,true);
         return Grafo1;
     }
 

@@ -4,29 +4,33 @@
 #include "Vertice.h"
 #include <set>
 #include <algorithm>
-#include "Aristas/Arista_dirigida.h"
+#include "Arista.h"
 using namespace std;
 
 
 
 template<typename Node_type>
 class Grafo{
-public:
-    typedef typename Node_type::Edge_type Edge_type;
-
 
 private:
     map<string,Vertice<Node_type>*> Self;
+    bool is_directed;
     void printEdge(const set<string>& parID){
         auto Itr = parID.begin();
         cout<<"{ "<<(*Itr)<<" , ";
         ++Itr;
         cout<<(*Itr)<<" } ";
     }
-
+    bool compare_map(const pair<string,string>& pair1,const pair<string,string>& pair2){
+        bool result;
+        if(pair1.first== pair2.first and pair1.second==pair2.second)
+            result=true;
+        else result = pair1.first == pair2.second and pair1.second == pair2.first;
+        return result;
+    }
 
 public:
-    explicit Grafo( map<string,Vertice<Node_type>*> self) : Self(self) {
+    explicit Grafo( map<string,Vertice<Node_type>*> self, bool is_directed) : Self(self),is_directed(is_directed) {
     }
 
     map<string, Vertice<Node_type>*>&getSelf() {
@@ -43,9 +47,9 @@ public:
             cout<<"No se pudo insertar la arista, revise los vértices\n";
         }
         else{
-            auto arista=new Edge_type(ID_1,ID_2,weight);
+            auto arista=new Arista(ID_1,ID_2,weight);
             getSelf()[ID_1]->Lista_de_adyacencia.push_back(arista);
-            if(typeid(Edge_type)!= typeid(Arista_dirigida))
+            if(!is_directed)
                 getSelf()[ID_2]->Lista_de_adyacencia.push_back(arista);
         }
     }
@@ -57,15 +61,23 @@ public:
         else{
             auto Self_1=Self[ID_1]->getSelf(); auto Self_2=Self[ID_2]->getSelf();
 
-            auto arista=new Edge_type(ID_1,ID_2,Node_type::Calculate_weight(*Self_1,*Self_2));
+            auto arista=new Arista(ID_1,ID_2,Node_type::Calculate_weight(*Self_1,*Self_2));
             getSelf()[ID_1]->Lista_de_adyacencia.push_back(arista);
-            if(typeid(Edge_type)!= typeid(Arista_dirigida))
+            if(!is_directed)
                 getSelf()[ID_2]->Lista_de_adyacencia.push_back(arista);  }
     }
 
 
-    bool Find_edge(string first_id, string  second_id){
+    bool Find_edge(string first_id, const string&  second_id){
+        if( Self.find(first_id)==Self.end() or Self.find(second_id)==Self.end())
+            return false;
 
+        vector<Arista*> possibles_edges=Self[first_id]->getLista();
+        for(auto i:possibles_edges){
+            if(compare_map(i->getPair(),pair<string,string>(first_id,second_id)))
+                return true;
+        }
+        return false;
     }
 
     bool Find_Vertex(string Id_vertex){
@@ -76,7 +88,7 @@ public:
 
     void Prim(const string& verticeArbitrario){
 
-        if(typeid(Edge_type)== typeid(Arista_dirigida))
+        if(is_directed)
             //throw runtime_error("Prim no puede ser aplicado en Grafos dirigidos");
             cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
         else{
@@ -89,14 +101,14 @@ public:
             map<set<string>,double> aristasPosibles;
             auto pesoMim = aristasPosibles.end();
             set<string> verticesInMST;
-            vector<Edge_type*> ListaAdy;
+            vector<Arista*> ListaAdy;
             auto setUnitario = new vector<string>(1);
             verticesInMST.insert((*it).first);
             while(Self.size() != verticesInMST.size()) {
                 ListaAdy = (*it).second->Lista_de_adyacencia;
 
-                for (int i = 0; i < ListaAdy.size(); ++i) {
-                    aristasPosibles.emplace(ListaAdy[i]->getParId(), ListaAdy[i]->getWeight());
+                for (auto & i : ListaAdy) {
+                    aristasPosibles.emplace(i->getParId(), i->getWeight());
                 }
                 if(pesoMim != aristasPosibles.end()) aristasPosibles.erase(pesoMim);
                 //First Edge
@@ -129,7 +141,7 @@ public:
     }
     void Prim(){
 
-        if(typeid(Edge_type)== typeid(Arista_dirigida))
+        if(is_directed)
             //throw runtime_error("Prim no puede ser aplicado en Grafos dirigidos");
             cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
         else{
@@ -137,14 +149,14 @@ public:
             map<set<string>,double> aristasPosibles;
             auto pesoMim = aristasPosibles.end();
             set<string> verticesInMST;
-            vector<Edge_type*> ListaAdy;
+            vector<Arista*> ListaAdy;
             auto setUnitario = new vector<string>(1);
             verticesInMST.insert((*it).first);
             while(Self.size() != verticesInMST.size()) {
                 ListaAdy = (*it).second->Lista_de_adyacencia;
 
-                for (int i = 0; i < ListaAdy.size(); ++i) {
-                    aristasPosibles.emplace(ListaAdy[i]->getParId(), ListaAdy[i]->getWeight());
+                for (auto & i : ListaAdy) {
+                    aristasPosibles.emplace(i->getParId(), i->getWeight());
                 }
                 if(pesoMim != aristasPosibles.end()) aristasPosibles.erase(pesoMim);
                 //First Edge
@@ -180,7 +192,7 @@ public:
 
 
     void Kruskal(){
-        if(typeid(Edge_type)== typeid(Arista_dirigida))
+        if(is_directed)
             //throw runtime_error("Kruskal no puede ser aplicado en Grafos dirigidos");
             cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
         else{

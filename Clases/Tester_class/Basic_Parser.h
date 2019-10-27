@@ -21,14 +21,13 @@ public:
             Map_for_graph[vertice1->getSelf()->getName()]=vertice1;
         }
 
-        Grafo<String_class> Grafo1(Map_for_graph);
+        Grafo<String_class> Grafo1(Map_for_graph, false);
 
 
         Value& aristas= d["Aristas"];
         for (size_t i=0; i<aristas.Size(); i++) {
             auto vertice1=aristas[i][0].GetString();auto vertice2=aristas[i][1].GetString();
-            auto arista=new Arista_no_dirigida(vertice1,vertice2,aristas[i][2].GetInt());
-
+            auto arista=new Arista(vertice1,vertice2,aristas[i][2].GetInt());
             Grafo1.getSelf()[vertice1]->Lista_de_adyacencia.push_back(arista);
             Grafo1.getSelf()[vertice2]->Lista_de_adyacencia.push_back(arista);
         }

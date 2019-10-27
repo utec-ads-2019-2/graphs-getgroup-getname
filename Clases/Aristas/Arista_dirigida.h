@@ -20,6 +20,12 @@ public:
         Id_begin = std::move(idBegin);
     }
 
+    static set<string> getParId(){
+        set<string> parID;
+        return parID;
+    }
+
+
     string getIdEnd() const {
         return Id_End;
     }

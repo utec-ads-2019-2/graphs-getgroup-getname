@@ -2,6 +2,8 @@
 #define GRAPHS_GETGROUP_GETNAME_GRAFO_H
 #include <map>
 #include "Vertice.h"
+#include <set>
+#include <algorithm>
 #include "Aristas/Arista_dirigida.h"
 using namespace std;
 
@@ -15,6 +17,13 @@ public:
 
 private:
     map<string,Vertice<Node_type>*> Self;
+    void printEdge(const set<string>& parID){
+        auto Itr = parID.begin();
+        cout<<"{ "<<(*Itr)<<" , ";
+        ++Itr;
+        cout<<(*Itr)<<" } ";
+    }
+
 
 public:
     explicit Grafo( map<string,Vertice<Node_type>*> self) : Self(self) {
@@ -52,16 +61,112 @@ public:
     }
 
 
-    void Prim(){
+    void Prim(const string& verticeArbitrario){
+
         if(typeid(Edge_type)== typeid(Arista_dirigida))
             //throw runtime_error("Prim no puede ser aplicado en Grafos dirigidos");
             cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
         else{
+            auto it = Self.find(verticeArbitrario);
+            if(it==Self.end()){
+                cout<<"Vertice no encontrado"<<endl;
+                return;
+            }
+
+            map<set<string>,double> aristasPosibles;
+            auto pesoMim = aristasPosibles.end();
+            set<string> verticesInMST;
+            vector<Edge_type*> ListaAdy;
+            auto setUnitario = new vector<string>(1);
+            verticesInMST.insert((*it).first);
+            while(Self.size() != verticesInMST.size()) {
+                ListaAdy = (*it).second->Lista_de_adyacencia;
+
+                for (int i = 0; i < ListaAdy.size(); ++i) {
+                    aristasPosibles.emplace(ListaAdy[i]->getParId(), ListaAdy[i]->getWeight());
+                }
+                if(pesoMim != aristasPosibles.end()) aristasPosibles.erase(pesoMim);
+                //First Edge
+                do {
+                    pesoMim = aristasPosibles.begin();
+                    for (auto item = aristasPosibles.begin(); item != aristasPosibles.end(); ++item) {
+                        if ((*item).second < (*pesoMim).second) pesoMim = item;
+                    }
+
+                    set_difference((*pesoMim).first.begin(), (*pesoMim).first.end(), verticesInMST.begin(),
+                                   verticesInMST.end(), setUnitario->begin());
+                    if(!(*setUnitario)[0].empty()) break;
+                    else aristasPosibles.erase(pesoMim);
+                }while(true);
+
+                printEdge((*pesoMim).first);
+
+                it = Self.find((*setUnitario)[0]);
+                setUnitario->clear();
+                delete setUnitario;
+                setUnitario = new vector<string>(1);
+
+                verticesInMST.insert((*pesoMim).first.begin(), (*pesoMim).first.end());
+            }
+
+            cout<<"exito"<<endl;
+
+
+     }
+    }
+    void Prim(){
+
+        if(typeid(Edge_type)== typeid(Arista_dirigida))
+            //throw runtime_error("Prim no puede ser aplicado en Grafos dirigidos");
+            cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
+        else{
+            auto it = Self.begin();
+            map<set<string>,double> aristasPosibles;
+            auto pesoMim = aristasPosibles.end();
+            set<string> verticesInMST;
+            vector<Edge_type*> ListaAdy;
+            auto setUnitario = new vector<string>(1);
+            verticesInMST.insert((*it).first);
+            while(Self.size() != verticesInMST.size()) {
+                ListaAdy = (*it).second->Lista_de_adyacencia;
+
+                for (int i = 0; i < ListaAdy.size(); ++i) {
+                    aristasPosibles.emplace(ListaAdy[i]->getParId(), ListaAdy[i]->getWeight());
+                }
+                if(pesoMim != aristasPosibles.end()) aristasPosibles.erase(pesoMim);
+                //First Edge
+                do {
+                    pesoMim = aristasPosibles.begin();
+                    for (auto item = aristasPosibles.begin(); item != aristasPosibles.end(); ++item) {
+                        if ((*item).second < (*pesoMim).second) pesoMim = item;
+                    }
+
+                    set_difference((*pesoMim).first.begin(), (*pesoMim).first.end(), verticesInMST.begin(),
+                                   verticesInMST.end(), setUnitario->begin());
+                    if(!(*setUnitario)[0].empty()) break;
+                    else aristasPosibles.erase(pesoMim);
+                }while(true);
+
+                printEdge((*pesoMim).first);
+
+                it = Self.find((*setUnitario)[0]);
+                setUnitario->clear();
+                delete setUnitario;
+                setUnitario = new vector<string>(1);
+
+                verticesInMST.insert((*pesoMim).first.begin(), (*pesoMim).first.end());
+            }
+
+            cout<<"exito"<<endl;
+
 
         }
     }
 
-    void Krukal(){
+
+
+
+    void Kruskal(){
         if(typeid(Edge_type)== typeid(Arista_dirigida))
             //throw runtime_error("Kruskal no puede ser aplicado en Grafos dirigidos");
             cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";

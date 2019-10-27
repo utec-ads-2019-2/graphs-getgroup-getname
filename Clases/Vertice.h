@@ -19,6 +19,9 @@ public:
 
     explicit Vertice(Node_type *self,vector<Edge_type*> Adyacencia) : self(self),Lista_de_adyacencia(Adyacencia) {}
     explicit Vertice(Node_type *self) : self(self){}
+    explicit Vertice(Node_type self)  {
+        Node_type* ptr=&self; this->self=ptr;
+    }
     Vertice(){
         self=nullptr;
     };

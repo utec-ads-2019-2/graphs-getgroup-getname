@@ -10,13 +10,14 @@ class Arista_dirigida{
     double weight;
 public:
     Arista_dirigida(string idBegin, string idEnd) : Id_begin(std::move(idBegin)), Id_End(std::move(idEnd)), weight(0) {}
+    Arista_dirigida(string idBegin, string idEnd, double weight) : Id_begin(std::move(idBegin)), Id_End(std::move(idEnd)), weight(weight) {}
 
     string getIdBegin() const {
         return Id_begin;
     }
 
     void setIdBegin(string idBegin) {
-        Id_begin = idBegin;
+        Id_begin = std::move(idBegin);
     }
 
     string getIdEnd() const {
@@ -24,7 +25,7 @@ public:
     }
 
     void setIdEnd(string idEnd) {
-        Id_End = idEnd;
+        Id_End = std::move(idEnd);
     }
 
     double getWeight() const {

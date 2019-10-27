@@ -10,6 +10,9 @@ class Arista_no_dirigida{
 public:
     Arista_no_dirigida(string firstId, string secondId, double weight) : first_id(std::move(firstId)), second_id(std::move(secondId)),
                                                                    weight(weight) {}
+    Arista_no_dirigida(string firstId, string secondId) : first_id(std::move(firstId)), second_id(std::move(secondId)),
+                                                                   weight(0) {}
+
 };
 
 

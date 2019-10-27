@@ -30,56 +30,62 @@ public:
         cout<<(*Itr)<<" } ";
     }
 
+    bool setEmpty(vector<string>* setUnitario){
+        return (*setUnitario)[0].empty();
+    }
+
 
     void Prim(){
         string verticeArbitrario;
-        map<set<string>,double> aristasPosibles;
-        auto pesoMim = aristasPosibles.end();
-        set<string> verticesInMST;
-        vector<Edge_type*> ListaAdy;
-        vector<string>* setUnitario = new vector<string>(1);
 
-            cout << "Insertar Vertice arbitrario: ";
-            cin >> verticeArbitrario;
-            auto it = Self.find(verticeArbitrario);
+        cout << "Insertar Vertice arbitrario: ";
+        cin >> verticeArbitrario;
 
-            if (it != Self.end()){
-                verticesInMST.insert((*it).first);
-                while(Self.size() != verticesInMST.size()) {
-                    ListaAdy = (*it).second.Lista_de_adyacencia;
+        auto it = Self.find(verticeArbitrario);
 
-                    for (int i = 0; i < ListaAdy.size(); ++i) {
-                        aristasPosibles.emplace(ListaAdy[i]->getParId(), ListaAdy[i]->getWeight());
-                    }
-                    if(pesoMim != aristasPosibles.end()) aristasPosibles.erase(pesoMim);
+        if (it != Self.end()){
+            map<set<string>,double> aristasPosibles;
+            auto pesoMim = aristasPosibles.end();
+
+            set<string> verticesInMST;
+            verticesInMST.insert((*it).first);
+            vector<string>* setUnitario = new vector<string>(1);
+
+            vector<Edge_type*> ListaAdy;
+
+            while(Self.size() != verticesInMST.size()) {
+                ListaAdy = (*it).second.Lista_de_adyacencia;
+
+                for (int i = 0; i < ListaAdy.size(); ++i) {
+                    aristasPosibles.emplace(ListaAdy[i]->getParId(), ListaAdy[i]->getWeight());
+                }
+                if(pesoMim != aristasPosibles.end()) aristasPosibles.erase(pesoMim);
                     //First Edge
-                    do {
-                        pesoMim = aristasPosibles.begin();
-                        for (auto item = aristasPosibles.begin(); item != aristasPosibles.end(); ++item) {
-                            if ((*item).second < (*pesoMim).second) pesoMim = item;
-                        }
+                do {
+                    pesoMim = aristasPosibles.begin();
+                    for (auto item = aristasPosibles.begin(); item != aristasPosibles.end(); ++item) {
+                        if ((*item).second < (*pesoMim).second) pesoMim = item;
+                    }
 
-                        set_difference((*pesoMim).first.begin(), (*pesoMim).first.end(), verticesInMST.begin(),
-                                       verticesInMST.end(), setUnitario->begin());
-                        if(!(*setUnitario)[0].empty()) break;
-                        else aristasPosibles.erase(pesoMim);
-                    }while(true);
+                     set_difference((*pesoMim).first.begin(), (*pesoMim).first.end(),
+                             verticesInMST.begin(),verticesInMST.end(), setUnitario->begin());
+                    if(!setEmpty(setUnitario)) break;
+                    else aristasPosibles.erase(pesoMim);
+                }while(true);
 
-                    printEdge((*pesoMim).first);
+                printEdge((*pesoMim).first);
 
-                    it = Self.find((*setUnitario)[0]);
-                    setUnitario->clear();
-                    delete setUnitario;
-                    setUnitario = new vector<string>(1);
+                it = Self.find((*setUnitario)[0]);
+                setUnitario->clear();
+                delete setUnitario;
+                setUnitario = new vector<string>(1);
 
-                    verticesInMST.insert((*pesoMim).first.begin(), (*pesoMim).first.end());
+                verticesInMST.insert((*pesoMim).first.begin(), (*pesoMim).first.end());
                 }
 
-                cout<<"exito"<<endl;
-
             }
-            else
-                cout<<"Vertice no encontrado"<<endl;
+        else
+            cout<<"Vertice no encontrado"<<endl;
 
     }
 };

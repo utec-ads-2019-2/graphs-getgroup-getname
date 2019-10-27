@@ -39,7 +39,6 @@ public:
             getSelf()[ID_2]->Lista_de_adyacencia.push_back(arista); }
     }
 
-
     void Agregar_Arista(const string& ID_1,const string& ID_2){
         if( Self.find(ID_1)==Self.end() or Self.find(ID_2)==Self.end()){
             cout<<"No se pudo insertar la arista, revise los vértices\n";
@@ -47,7 +46,7 @@ public:
         else{
             auto Self_1=Self[ID_1]->getSelf(); auto Self_2=Self[ID_2]->getSelf();
 
-            auto arista=new Edge_type(ID_1,ID_2,Node_type::Calculate_distance(*Self_1,*Self_2));
+            auto arista=new Edge_type(ID_1,ID_2,Node_type::Calculate_weight(*Self_1,*Self_2));
             getSelf()[ID_1]->Lista_de_adyacencia.push_back(arista);
             getSelf()[ID_2]->Lista_de_adyacencia.push_back(arista); }
     }
@@ -58,12 +57,22 @@ public:
 
     void Prim(){
         if(typeid(Edge_type)== typeid(Arista_dirigida))
-            //throw runtime_error("El algoritmo no puede ser aplicado en Grafos dirigidos");
+            //throw runtime_error("Prim no puede ser aplicado en Grafos dirigidos");
             cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
         else{
 
         }
     }
+
+    void Krukal(){
+        if(typeid(Edge_type)== typeid(Arista_dirigida))
+            //throw runtime_error("Kruskal no puede ser aplicado en Grafos dirigidos");
+            cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
+        else{
+
+        }
+    }
+
 
 
 };

@@ -42,7 +42,7 @@ public:
             for(auto arista:vertice.second->getLista()){
                 auto Primer_vertice=vertice.second->getSelf();
                 auto Segundo_Vertice=Map_for_graph[arista->getIdEnd()]->getSelf();
-                arista->setWeight(Airport::Calculate_distance(*Primer_vertice,*Segundo_Vertice));
+                arista->setWeight(Airport::Calculate_weight(*Primer_vertice,*Segundo_Vertice));
             }
         }
 

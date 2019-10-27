@@ -2004,7 +2004,7 @@ private:
         inline static bool Usable(SizeType len) { return                       (MaxSize >= len); }
         inline void     SetLength(SizeType len) { str[LenPos] = static_cast<Ch>(MaxSize -  len); }
         inline SizeType GetLength() const       { return  static_cast<SizeType>(MaxSize -  str[LenPos]); }
-    };  // at most as many bytes as "String" above => 12 bytes in 32-bit mode, 16 bytes in 64-bit mode
+    };  // at most as many bytes as "Tester_class" above => 12 bytes in 32-bit mode, 16 bytes in 64-bit mode
 
     // By using proper binary layout, retrieval of different integer types do not need conversions.
     union Number {

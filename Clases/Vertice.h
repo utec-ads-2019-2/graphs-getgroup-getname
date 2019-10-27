@@ -2,9 +2,11 @@
 #define GRAPHS_GETGROUP_GETNAME_VERTICE_H
 #include <vector>
 using namespace std;
-template<typename Node_type, typename Edge_type>
+template<typename Node_type>
 
 class Vertice {
+public:
+    typedef typename Node_type::Edge_type Edge_type;
     Node_type* self;
     vector<Edge_type*> Lista_de_adyacencia;
 public:
@@ -16,6 +18,7 @@ public:
     }
 
     explicit Vertice(Node_type *self,vector<Edge_type*> Adyacencia) : self(self),Lista_de_adyacencia(Adyacencia) {}
+    explicit Vertice(Node_type *self) : self(self){}
     Vertice(){
         self=nullptr;
     };

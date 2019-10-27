@@ -614,7 +614,7 @@ public:
 
         AssignIfExist(uniqueItems_, value, GetUniqueItemsString());
 
-        // String
+        // Tester_class
         AssignIfExist(minLength_, value, GetMinLengthString());
         AssignIfExist(maxLength_, value, GetMaxLengthString());
 

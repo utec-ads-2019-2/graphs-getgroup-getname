@@ -962,7 +962,7 @@ private:
             if (isNumber && token->length > 1 && token->name[0] == '0')
                 isNumber = false;
 
-            // String to SizeType conversion
+            // Tester_class to SizeType conversion
             SizeType n = 0;
             if (isNumber) {
                 for (size_t j = 0; j < token->length; j++) {

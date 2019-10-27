@@ -952,7 +952,7 @@ private:
         SizeType length_;
     };
 
-    // Parse string and generate String event. Different code paths for kParseInsituFlag.
+    // Parse string and generate Tester_class event. Different code paths for kParseInsituFlag.
     template<unsigned parseFlags, typename InputStream, typename Handler>
     void ParseString(InputStream& is, Handler& handler, bool isKey = false) {
         internal::StreamLocalCopy<InputStream> copy(is);
@@ -1848,7 +1848,7 @@ private:
                 IterativeParsingErrorState,         // Right curly bracket
                 IterativeParsingErrorState,         // Comma
                 IterativeParsingErrorState,         // Colon
-                IterativeParsingValueState,         // String
+                IterativeParsingValueState,         // Tester_class
                 IterativeParsingValueState,         // False
                 IterativeParsingValueState,         // True
                 IterativeParsingValueState,         // Null
@@ -1862,7 +1862,7 @@ private:
                 IterativeParsingObjectFinishState,  // Right curly bracket
                 IterativeParsingErrorState,         // Comma
                 IterativeParsingErrorState,         // Colon
-                IterativeParsingMemberKeyState,     // String
+                IterativeParsingMemberKeyState,     // Tester_class
                 IterativeParsingErrorState,         // False
                 IterativeParsingErrorState,         // True
                 IterativeParsingErrorState,         // Null
@@ -1876,7 +1876,7 @@ private:
                 IterativeParsingErrorState,             // Right curly bracket
                 IterativeParsingErrorState,             // Comma
                 IterativeParsingKeyValueDelimiterState, // Colon
-                IterativeParsingErrorState,             // String
+                IterativeParsingErrorState,             // Tester_class
                 IterativeParsingErrorState,             // False
                 IterativeParsingErrorState,             // True
                 IterativeParsingErrorState,             // Null
@@ -1890,7 +1890,7 @@ private:
                 IterativeParsingObjectFinishState,      // Right curly bracket
                 IterativeParsingMemberDelimiterState,   // Comma
                 IterativeParsingErrorState,             // Colon
-                IterativeParsingErrorState,             // String
+                IterativeParsingErrorState,             // Tester_class
                 IterativeParsingErrorState,             // False
                 IterativeParsingErrorState,             // True
                 IterativeParsingErrorState,             // Null
@@ -1910,7 +1910,7 @@ private:
                 IterativeParsingErrorState,             // Right curly bracket
                 IterativeParsingErrorState,             // Comma
                 IterativeParsingErrorState,             // Colon
-                IterativeParsingElementState,           // String
+                IterativeParsingElementState,           // Tester_class
                 IterativeParsingElementState,           // False
                 IterativeParsingElementState,           // True
                 IterativeParsingElementState,           // Null
@@ -1924,7 +1924,7 @@ private:
                 IterativeParsingErrorState,             // Right curly bracket
                 IterativeParsingElementDelimiterState,  // Comma
                 IterativeParsingErrorState,             // Colon
-                IterativeParsingErrorState,             // String
+                IterativeParsingErrorState,             // Tester_class
                 IterativeParsingErrorState,             // False
                 IterativeParsingErrorState,             // True
                 IterativeParsingErrorState,             // Null
@@ -1950,7 +1950,7 @@ private:
                 IterativeParsingErrorState,             // Right curly bracket
                 IterativeParsingErrorState,             // Comma
                 IterativeParsingErrorState,             // Colon
-                IterativeParsingElementState,           // String
+                IterativeParsingElementState,           // Tester_class
                 IterativeParsingElementState,           // False
                 IterativeParsingElementState,           // True
                 IterativeParsingElementState,           // Null
@@ -1964,7 +1964,7 @@ private:
                 IterativeParsingObjectFinishState,  // Right curly bracket
                 IterativeParsingErrorState,         // Comma
                 IterativeParsingErrorState,         // Colon
-                IterativeParsingMemberKeyState,     // String
+                IterativeParsingMemberKeyState,     // Tester_class
                 IterativeParsingErrorState,         // False
                 IterativeParsingErrorState,         // True
                 IterativeParsingErrorState,         // Null
@@ -1978,7 +1978,7 @@ private:
                 IterativeParsingErrorState,             // Right curly bracket
                 IterativeParsingErrorState,             // Comma
                 IterativeParsingErrorState,             // Colon
-                IterativeParsingMemberValueState,       // String
+                IterativeParsingMemberValueState,       // Tester_class
                 IterativeParsingMemberValueState,       // False
                 IterativeParsingMemberValueState,       // True
                 IterativeParsingMemberValueState,       // Null

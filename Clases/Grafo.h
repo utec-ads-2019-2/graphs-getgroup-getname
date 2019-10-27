@@ -1,7 +1,7 @@
 #ifndef GRAPHS_GETGROUP_GETNAME_GRAFO_H
 #define GRAPHS_GETGROUP_GETNAME_GRAFO_H
 #include <map>
-#include "../Vertices/Vertice.h"
+#include "Vertice.h"
 using namespace std;
 
 
@@ -13,9 +13,14 @@ public:
 
 
 private:
-    map<int,Vertice<Node_type,Edge_type>> Self;
+    map<string,Vertice<Node_type>> Self;
+
 public:
-    explicit Grafo( map<int,Vertice<Node_type,Edge_type>>self) : Self(self) {}
+    explicit Grafo( map<string,Vertice<Node_type>> self) : Self(self) {}
+
+    map<string, Vertice<Node_type>>&getSelf() {
+        return Self;
+    }
 };
 
 

@@ -33,7 +33,6 @@ public:
         return Latitude;
     }
 
-
     static double Calculate_distance(const Airport& airport1,const Airport& airport2){
 
         double dLat = (airport2.getLatitude() - airport1.getLatitude() ) *  M_PI / 180.0;

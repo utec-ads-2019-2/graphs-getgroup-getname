@@ -18,7 +18,7 @@ public:
     }
 
     Grafo<Airport> Generate_Graph(){
-        map<int,Vertice<Airport,Arista_dirigida>> Map_for_graph;
+        map<string,Vertice<Airport>> Map_for_graph;
         ifstream ifs(archivo); IStreamWrapper isw(ifs); Document d; d.ParseStream(isw);
         for(auto itr = d.Begin(); itr != d.End() ;++itr){
             string City=(*itr)["City"].GetString(),Name=(*itr)["Name"].GetString(),Country=(*itr)["Country"].GetString();
@@ -29,13 +29,13 @@ public:
             const Value& a = (*itr)["destinations"]; vector<Arista_dirigida*> aristas;
 
             for (SizeType i = 0; i < a.Size(); i++){
-                auto arista= new Arista_dirigida(Id,stoi(a[i].GetString()));
+                auto arista= new Arista_dirigida((*itr)["Id"].GetString(),a[i].GetString());
                 aristas.push_back(arista);
             }
 
             auto airport1=new Airport(City,Name,Country,Longitude,Latitude,Id);
-            Vertice<Airport,Arista_dirigida> vertice1(airport1,aristas);
-            Map_for_graph[vertice1.getSelf()->getId()]=vertice1;
+            Vertice<Airport> vertice1(airport1,aristas);
+            Map_for_graph[to_string(vertice1.getSelf()->getId())]=vertice1;
         }
 
         for(const auto& vertice:Map_for_graph){

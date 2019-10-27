@@ -6,12 +6,16 @@ using namespace std;
 
 
 
-template<typename Node_type, typename weight_type>
+template<typename Node_type>
 class Grafo{
 public:
     typedef typename Node_type::Edge_type Edge_type;
+
+
 private:
-    map<int, Vertice<Node_type,Edge_type>> Self;
+    map<int,Vertice<Node_type,Edge_type>> Self;
+public:
+    explicit Grafo( map<int,Vertice<Node_type,Edge_type>>self) : Self(self) {}
 };
 
 

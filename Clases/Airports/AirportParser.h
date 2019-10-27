@@ -7,12 +7,18 @@
 #include "../../rapidjson/istreamwrapper.h"
 #include <fstream>
 #include <utility>
+#include <vector>
 using namespace rapidjson;
-
 class AirportParser{
     string archivo;
 
-    void Generate_airports(){
+public:
+
+    explicit AirportParser(string file):archivo(std::move(file)){
+    }
+
+    Grafo<Airport> Generate_Graph(){
+        map<int,Vertice<Airport,Arista_dirigida>> Map_for_graph;
         ifstream ifs(archivo); IStreamWrapper isw(ifs); Document d; d.ParseStream(isw);
         for(auto itr = d.Begin(); itr != d.End() ;++itr){
             string City=(*itr)["City"].GetString(),Name=(*itr)["Name"].GetString(),Country=(*itr)["Country"].GetString();
@@ -20,20 +26,31 @@ class AirportParser{
             int Id=stoi((*itr)["Id"].GetString());
 
 
-            const Value& a = (*itr)["destinations"]; auto destinations= new int[a.Size()];
+            const Value& a = (*itr)["destinations"]; vector<Arista_dirigida*> aristas;
+
             for (SizeType i = 0; i < a.Size(); i++){
-                destinations[i]=stoi(a[i].GetString());
+                auto arista= new Arista_dirigida(Id,stoi(a[i].GetString()));
+                aristas.push_back(arista);
             }
 
-            auto airport1=new Airport(City,Name,Country,Longitude,Latitude,Id,destinations);
-
+            auto airport1=new Airport(City,Name,Country,Longitude,Latitude,Id);
+            Vertice<Airport,Arista_dirigida> vertice1(airport1,aristas);
+            Map_for_graph[vertice1.getSelf()->getId()]=vertice1;
         }
-    }
-public:
 
-    explicit AirportParser(string file):archivo(std::move(file)){
-        Generate_airports();
+        for(const auto& vertice:Map_for_graph){
+            for(auto arista:vertice.second.getLista()){
+                auto Primer_vertice=vertice.second.getSelf();
+                auto Segundo_Vertice=Map_for_graph[arista->getIdEnd()].getSelf();
+                arista->setWeight(Airport::Calculate_distance(*Primer_vertice,*Segundo_Vertice));
+            }
+        }
+
+
+        Grafo<Airport> Grafo1(Map_for_graph);
+        return Grafo1;
     }
+
 };
 
 

@@ -3,23 +3,7 @@
 #include "Clases/Airports/AirportParser.h"
 
 int main() {
-    // 1. Parse a JSON string into DOM.
-    const char* json = R"({"project":"rapidjson","stars":10})";
-    Document d;
-    d.Parse(json);
-
-    // 2. Modify it by DOM.
-    Value& s = d["stars"];
-    s.SetInt(s.GetInt() + 1);
-
-    // 3. Stringify the DOM
-    StringBuffer buffer;
-    Writer<StringBuffer> writer(buffer);
-    d.Accept(writer);
-
-    // Output {"project":"rapidjson","stars":11}
-    std::cout << buffer.GetString() << std::endl;
-
-    AirportParser parser("../json_files/airports_mini.json");
+    AirportParser Parser_1("../json_files/airports_mini.json");
+    auto Grafo_1=Parser_1.Generate_Graph();
     return 0;
 }

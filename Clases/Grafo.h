@@ -52,9 +52,6 @@ public:
     }
 
 
-
-
-
     void Prim(){
         if(typeid(Edge_type)== typeid(Arista_dirigida))
             //throw runtime_error("Prim no puede ser aplicado en Grafos dirigidos");

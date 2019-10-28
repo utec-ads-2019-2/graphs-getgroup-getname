@@ -34,9 +34,9 @@ private:
         setUnitario = new vector<string>(n);
     }
 
-    bool findEdge(vector<Arista*> allEdges, Arista* edge){
-        for (int i = 0; i < allEdges.size(); ++i) {
-            if(*(allEdges[i]) == (*edge)) return true;
+    bool findEdge(const vector<Arista*>& allEdges, Arista* edge){
+        for (auto & allEdge : allEdges) {
+            if(*allEdge == (*edge)) return true;
         }
         return false;
     }
@@ -207,8 +207,8 @@ public:
 
                 if(resultEdges.size() == Self.size()-1) break;
             }
-            for (int i = 0; i < resultEdges.size(); ++i) {
-                printEdge(resultEdges[i]->getParId());
+            for (auto & resultEdge : resultEdges) {
+                printEdge(resultEdge->getParId());
             }
         }
     }

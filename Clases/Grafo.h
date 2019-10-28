@@ -65,11 +65,12 @@ private:
                 multimap<double,Arista*> aristasPosibles;
 
                 set<string> verticesInMST;
+                verticesInMST.insert((*it).first); //Vertice Arbitrario
 
-                set<string> verticesEgde;
+                set<string> verticesEgde; //Vertices de la arista
 
                 auto setUnitario = new vector<string>(1);
-                verticesInMST.insert((*it).first);
+
 
                 while(Self.size() != verticesInMST.size()) {
 
@@ -176,7 +177,7 @@ public:
     //*********************************
     //FUNCIONES
     vector<Arista*> Prim(const string& verticeArbitrario){
-        return algorithmPrim(verticeArbitrario);;
+        return algorithmPrim(verticeArbitrario);
     }
 
     vector<Arista*> Prim(){

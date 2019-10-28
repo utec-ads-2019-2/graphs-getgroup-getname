@@ -71,11 +71,10 @@ int main() {
     Grafo_2.printPrim();
     Grafo_2.printPrim("B");
     Grafo_2.printKruskal();
-    //Grafo_2.Kruskal();
-    /*Grafo_2.Agregar_Vertice("F",String_class("F"));
+    Grafo_2.Kruskal();
+    Grafo_2.Agregar_Vertice("F",String_class("F"));
     Grafo_2.Agregar_Arista("A","B",500);
     cout<<Grafo_2.Find_Vertex("A")<<Grafo_2.Find_Vertex("Z");
     cout<<Grafo_2.Find_edge("A","B")<<Grafo_2.Find_edge("B","A");
-    */
     return 0;
 }

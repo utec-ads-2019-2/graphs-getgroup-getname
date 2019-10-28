@@ -7,7 +7,6 @@
 
 #include <utility>
 #include <cmath>
-#include "../Aristas/Arista_dirigida.h"
 
 
 class Airport {
@@ -16,7 +15,6 @@ private:
     float Longitude,Latitude;
     int id;
 public:
-    typedef Arista_dirigida Edge_type;
 
     Airport(string city, string name, string country, float longitude, float latitude, int id) :
             City(std::move(city)), Name(std::move(name)), Country(std::move(country)), Longitude(longitude), Latitude(latitude),
@@ -33,7 +31,11 @@ public:
         return Latitude;
     }
 
-    static double Calculate_distance(const Airport& airport1,const Airport& airport2){
+    static bool is_Directed(){
+        return true;
+    };
+
+    static double Calculate_weight(const Airport& airport1,const Airport& airport2){
 
         double dLat = (airport2.getLatitude() - airport1.getLatitude() ) *  M_PI / 180.0;
         double dLon = (airport2.getLongitude() - airport1.getLongitude()) * M_PI / 180.0;

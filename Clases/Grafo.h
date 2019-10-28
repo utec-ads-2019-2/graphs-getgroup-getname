@@ -151,11 +151,44 @@ public:
         algorithmPrim((*it).first);
     }
 
+    bool findEdge(vector<Arista*> allEdges, Arista* edge){
+        for (int i = 0; i < allEdges.size(); ++i) {
+            if(*(allEdges[i]) == (*edge)) return true;
+        }
+        return false;
+    }
+
+    void refillEdges(vector<Arista*>& allEdges){
+        for(auto it= Self.begin(); it!=Self.end(); ++it){
+            auto ListaAdy = (*it).second->Lista_de_adyacencia;
+            for(auto itr = ListaAdy.begin(); itr!=ListaAdy.end(); ++itr) {
+                if(!findEdge(allEdges,*itr)) allEdges.push_back(*itr);
+            }
+        }
+    }
+
+    multimap<double,Arista*> inOrderEdges(vector<Arista*>& allEdges){
+        multimap<double,Arista*> inOrder;
+        for(auto item : allEdges){
+            inOrder.emplace(item->getWeight(),item);
+        }
+
+        return inOrder;
+    }
+
     void Kruskal(){
         //throw runtime_error("Kruskal no puede ser aplicado en Grafos dirigidos");
         if(is_directed)
             cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
         else{
+            vector<Arista*> allEdges;
+            refillEdges(allEdges);
+            auto OrderEdges = inOrderEdges(allEdges);
+            allEdges.clear();
+
+
+
+
 
         }
     }

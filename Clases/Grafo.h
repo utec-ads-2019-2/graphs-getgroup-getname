@@ -48,7 +48,8 @@ private:
         else result = pair1.first == pair2.second and pair1.second == pair2.first;
         return result;
     }
-
+    // ******************************//
+    //Prim Optimizado
     vector<Arista*> algorithmPrim(const string& verticeArbitrario){
         //throw runtime_error("Prim no puede ser aplicado en Grafos dirigidos");
         vector<Arista*> resultEdges;
@@ -172,10 +173,10 @@ public:
     bool Find_Vertex(string Id_vertex){
         return (Self.find(Id_vertex)!=Self.end());
     }
-
+    //*********************************
+    //FUNCIONES
     vector<Arista*> Prim(const string& verticeArbitrario){
-        vector<Arista*> resultEdge = algorithmPrim(verticeArbitrario);
-        return resultEdge;
+        return algorithmPrim(verticeArbitrario);;
     }
 
     vector<Arista*> Prim(){

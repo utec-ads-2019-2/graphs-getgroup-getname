@@ -27,10 +27,10 @@ private:
     bool setEmpty(vector<string>* setUnitario){
         return (*setUnitario)[0].empty();
     }
-    void restartVector(vector<string>*& setUnitario){
+    void restartVector(vector<string>*& setUnitario,int n){
         setUnitario->clear();
         delete setUnitario;
-        setUnitario = new vector<string>(1);
+        setUnitario = new vector<string>(n);
     }
 
     bool compare_map(const pair<string,string>& pair1,const pair<string,string>& pair2){
@@ -73,16 +73,14 @@ private:
 
                     set_difference((*pesoMim).first.begin(), (*pesoMim).first.end(), verticesInMST.begin(),
                                    verticesInMST.end(), setUnitario->begin());
-                    if(!(*setUnitario)[0].empty()) break;
+                    if(!setEmpty(setUnitario)) break;
                     else aristasPosibles.erase(pesoMim);
                 }while(true);
 
                 printEdge((*pesoMim).first);
 
                 it = Self.find((*setUnitario)[0]);
-                setUnitario->clear();
-                delete setUnitario;
-                setUnitario = new vector<string>(1);
+                restartVector(setUnitario,1);
 
                 verticesInMST.insert((*pesoMim).first.begin(), (*pesoMim).first.end());
             }

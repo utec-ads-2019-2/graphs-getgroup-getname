@@ -44,9 +44,9 @@ private:
     bool compare_map(const pair<string,string>& pair1,const pair<string,string>& pair2){
         bool result;
         if(pair1.first== pair2.first and pair1.second==pair2.second)
-            result=true;
-        else result = pair1.first == pair2.second and pair1.second == pair2.first;
-        return result;
+            return true;
+        else
+            return pair1.first == pair2.second and pair1.second == pair2.first;
     }
 
     void algorithmPrim(const string& verticeArbitrario){
@@ -168,6 +168,8 @@ public:
         return (Self.find(Id_vertex)!=Self.end());
     }
 
+
+
     void Prim(const string& verticeArbitrario){
         algorithmPrim(verticeArbitrario);
     }
@@ -238,6 +240,8 @@ public:
     bool Is_Dense(){
         return (Get_Density()>=0.5);
     }
+
+
 
 };
 

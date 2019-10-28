@@ -12,6 +12,10 @@ public:
     Arista(string idBegin, string idEnd) : Id_begin(std::move(idBegin)), Id_End(std::move(idEnd)), weight(0) {}
     Arista(string idBegin, string idEnd, double weight) : Id_begin(std::move(idBegin)), Id_End(std::move(idEnd)), weight(weight) {}
 
+    bool operator ==(Arista toCompare){
+        return toCompare.getParId() == getParId();
+    }
+
     string getIdBegin() const {
         return Id_begin;
     }
@@ -54,3 +58,5 @@ public:
 
 
 #endif //GRAPHS_GETGROUP_GETNAME_ARISTA_DIRIGIDA_H
+
+

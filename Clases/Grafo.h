@@ -5,6 +5,7 @@
 #include <set>
 #include <algorithm>
 #include "Arista.h"
+#include "DisjoinSet.h"
 using namespace std;
 
 
@@ -31,6 +32,13 @@ private:
         setUnitario->clear();
         delete setUnitario;
         setUnitario = new vector<string>(n);
+    }
+
+    bool findEdge(vector<Arista*> allEdges, Arista* edge){
+        for (int i = 0; i < allEdges.size(); ++i) {
+            if(*(allEdges[i]) == (*edge)) return true;
+        }
+        return false;
     }
 
     bool compare_map(const pair<string,string>& pair1,const pair<string,string>& pair2){
@@ -86,6 +94,24 @@ private:
             }
 
         }
+    }
+
+    void refillEdges(vector<Arista*>& allEdges){
+        for(auto it= Self.begin(); it!=Self.end(); ++it){
+            auto ListaAdy = (*it).second->Lista_de_adyacencia;
+            for(auto itr = ListaAdy.begin(); itr!=ListaAdy.end(); ++itr) {
+                if(!findEdge(allEdges,*itr)) allEdges.push_back(*itr);
+            }
+        }
+    }
+
+    multimap<double,Arista*> inOrderEdges(vector<Arista*>& allEdges){
+        multimap<double,Arista*> inOrder;
+        for(auto item : allEdges){
+            inOrder.emplace(item->getWeight(),item);
+        }
+
+        return inOrder;
     }
 
 public:
@@ -151,31 +177,6 @@ public:
         algorithmPrim((*it).first);
     }
 
-    bool findEdge(vector<Arista*> allEdges, Arista* edge){
-        for (int i = 0; i < allEdges.size(); ++i) {
-            if(*(allEdges[i]) == (*edge)) return true;
-        }
-        return false;
-    }
-
-    void refillEdges(vector<Arista*>& allEdges){
-        for(auto it= Self.begin(); it!=Self.end(); ++it){
-            auto ListaAdy = (*it).second->Lista_de_adyacencia;
-            for(auto itr = ListaAdy.begin(); itr!=ListaAdy.end(); ++itr) {
-                if(!findEdge(allEdges,*itr)) allEdges.push_back(*itr);
-            }
-        }
-    }
-
-    multimap<double,Arista*> inOrderEdges(vector<Arista*>& allEdges){
-        multimap<double,Arista*> inOrder;
-        for(auto item : allEdges){
-            inOrder.emplace(item->getWeight(),item);
-        }
-
-        return inOrder;
-    }
-
     void Kruskal(){
         //throw runtime_error("Kruskal no puede ser aplicado en Grafos dirigidos");
         if(is_directed)
@@ -186,10 +187,29 @@ public:
             auto OrderEdges = inOrderEdges(allEdges);
             allEdges.clear();
 
+            DisjointSet<string> ds;
 
+            for(auto vertice : Self){
+                ds.makeSet(vertice.first);
+            }
 
+            vector<Arista*> resultEdges;
+            string parentA;
+            string parentB;
+            for(auto item : OrderEdges){
+                parentA = ds.findSet(item.second->getPair().first);
+                parentB = ds.findSet(item.second->getPair().second);
 
+                if(parentA != parentB){
+                    resultEdges.push_back(item.second);
+                    ds.unionSet(item.second->getPair().first,item.second->getPair().second);
+                }
 
+                if(resultEdges.size() == Self.size()-1) break;
+            }
+            for (int i = 0; i < resultEdges.size(); ++i) {
+                printEdge(resultEdges[i]->getParId());
+            }
         }
     }
 

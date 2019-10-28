@@ -20,8 +20,8 @@ public:
 
     explicit Vertice(Node_type *self,vector<Arista*> Adyacencia) : self(self),Lista_de_adyacencia(std::move(Adyacencia)) {}
     explicit Vertice(Node_type *self) : self(self){}
-    explicit Vertice(Node_type self)  {
-        Node_type* ptr=&self; this->self=ptr;
+    explicit Vertice(Node_type yy)  {
+       self =new Node_type(yy);
     }
     Vertice(){
         self=nullptr;

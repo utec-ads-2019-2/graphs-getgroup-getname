@@ -213,7 +213,31 @@ public:
         }
     }
 
+    float Get_Density(){
+        int numero_de_vertices=Self.size();
 
+        if(numero_de_vertices<=1)
+            return 0;
+
+        vector<Arista*> no_rep_edges;
+        for(auto it=Self.begin();it!=Self.end();it++){
+            auto ListaAdy = (*it).second->Lista_de_adyacencia;
+            for(auto itr = ListaAdy.begin(); itr!=ListaAdy.end(); ++itr) {
+                if(find(no_rep_edges.begin(),no_rep_edges.end(),*itr)==no_rep_edges.end())
+                    no_rep_edges.push_back(*itr);
+            }
+        }
+        float density=float(no_rep_edges.size())/
+                   float((numero_de_vertices*(numero_de_vertices-1)));
+        if(!is_directed)
+            density*=2;
+
+        return density;
+    }
+
+    bool Is_Dense(){
+        return (Get_Density()>=0.5);
+    }
 
 };
 

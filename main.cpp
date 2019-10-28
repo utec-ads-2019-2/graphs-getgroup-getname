@@ -68,8 +68,10 @@ int main() {
 
 
     auto Grafo_2=Parser_2.Generate_Graph();
-    //Grafo_2.Prim();
-    Grafo_2.Kruskal();
+    Grafo_2.printPrim();
+    Grafo_2.printPrim("B");
+    Grafo_2.printKruskal();
+    //Grafo_2.Kruskal();
     /*Grafo_2.Agregar_Vertice("F",String_class("F"));
     Grafo_2.Agregar_Arista("A","B",500);
     cout<<Grafo_2.Find_Vertex("A")<<Grafo_2.Find_Vertex("Z");

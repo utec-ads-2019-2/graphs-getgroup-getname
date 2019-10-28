@@ -49,51 +49,56 @@ private:
         return result;
     }
 
-    void algorithmPrim(const string& verticeArbitrario){
+    vector<Arista*> algorithmPrim(const string& verticeArbitrario){
         //throw runtime_error("Prim no puede ser aplicado en Grafos dirigidos");
-        if(is_directed)
+        vector<Arista*> resultEdges;
+        if(is_directed){
             cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
+        }
         else{
             auto it = Self.find(verticeArbitrario);
             if(it==Self.end()){
                 cout<<"Vertice no encontrado"<<endl;
-                return;
             }
+            else{
+                multimap<double,Arista*> aristasPosibles;
 
-            map<set<string>,double> aristasPosibles;
-            auto pesoMim = aristasPosibles.end();
-            set<string> verticesInMST;
-            vector<Arista*> ListaAdy;
-            auto setUnitario = new vector<string>(1);
-            verticesInMST.insert((*it).first);
-            while(Self.size() != verticesInMST.size()) {
-                ListaAdy = (*it).second->Lista_de_adyacencia;
+                set<string> verticesInMST;
 
-                for (auto & i : ListaAdy) {
-                    aristasPosibles.emplace(i->getParId(), i->getWeight());
-                }
-                if(pesoMim != aristasPosibles.end()) aristasPosibles.erase(pesoMim);
-                do {
-                    pesoMim = aristasPosibles.begin();
-                    for (auto item = aristasPosibles.begin(); item != aristasPosibles.end(); ++item) {
-                        if ((*item).second < (*pesoMim).second) pesoMim = item;
+                set<string> verticesEgde;
+
+                auto setUnitario = new vector<string>(1);
+                verticesInMST.insert((*it).first);
+
+                while(Self.size() != verticesInMST.size()) {
+
+                    for (auto& item: (*it).second->Lista_de_adyacencia) {
+                        if(!findEdge(resultEdges,item)) aristasPosibles.emplace(item->getWeight(),item);
                     }
 
-                    set_difference((*pesoMim).first.begin(), (*pesoMim).first.end(), verticesInMST.begin(),
-                                   verticesInMST.end(), setUnitario->begin());
-                    if(!setEmpty(setUnitario)) break;
-                    else aristasPosibles.erase(pesoMim);
-                }while(true);
+                    do {
+                        verticesEgde = (*aristasPosibles.begin()).second->getParId();
 
-                printEdge((*pesoMim).first);
+                        set_difference(verticesEgde.begin(), verticesEgde.end(), verticesInMST.begin(),
+                                       verticesInMST.end(), setUnitario->begin());
 
-                it = Self.find((*setUnitario)[0]);
-                restartVector(setUnitario,1);
+                        if(!setEmpty(setUnitario)) break;
+                        else aristasPosibles.erase(aristasPosibles.begin());
 
-                verticesInMST.insert((*pesoMim).first.begin(), (*pesoMim).first.end());
+                    }while(true);
+
+                    it = Self.find((*setUnitario)[0]);
+                    restartVector(setUnitario,1);
+
+                    resultEdges.push_back((*aristasPosibles.begin()).second);
+                    verticesInMST.insert(verticesEgde.begin(),verticesEgde.end());
+
+                    aristasPosibles.erase(aristasPosibles.begin());
+                }
             }
-
+            return resultEdges;
         }
+        return resultEdges;
     }
 
     void refillEdges(vector<Arista*>& allEdges){
@@ -168,19 +173,22 @@ public:
         return (Self.find(Id_vertex)!=Self.end());
     }
 
-    void Prim(const string& verticeArbitrario){
-        algorithmPrim(verticeArbitrario);
+    vector<Arista*> Prim(const string& verticeArbitrario){
+        vector<Arista*> resultEdge = algorithmPrim(verticeArbitrario);
+        return resultEdge;
     }
 
-    void Prim(){
+    vector<Arista*> Prim(){
         auto it = Self.begin();
-        algorithmPrim((*it).first);
+        return algorithmPrim((*it).first);
     }
 
-    void Kruskal(){
+    vector<Arista*> Kruskal(){
         //throw runtime_error("Kruskal no puede ser aplicado en Grafos dirigidos");
-        if(is_directed)
+        vector<Arista*> resultEdges;
+        if(is_directed){
             cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
+        }
         else{
             vector<Arista*> allEdges;
             refillEdges(allEdges);
@@ -193,7 +201,6 @@ public:
                 ds.makeSet(vertice.first);
             }
 
-            vector<Arista*> resultEdges;
             string parentA;
             string parentB;
             for(auto item : OrderEdges){
@@ -207,12 +214,32 @@ public:
 
                 if(resultEdges.size() == Self.size()-1) break;
             }
-            for (int i = 0; i < resultEdges.size(); ++i) {
-                printEdge(resultEdges[i]->getParId());
-            }
         }
+        return resultEdges;
     }
 
+    void printKruskal(){
+        auto resultEdges = Kruskal();
+        for(auto& item: resultEdges){
+            printEdge(item->getParId());
+        }
+        cout<<endl;
+    }
+
+   void printPrim(string verticeArbitrario){
+        auto resultEdges = Prim(verticeArbitrario);
+        for (auto & item : resultEdges) {
+            printEdge(item->getParId());
+        }
+        cout<<endl;
+    }
+    void printPrim(){
+        auto resultEdges = Prim();
+        for (auto & item : resultEdges) {
+            printEdge(item->getParId());
+        }
+        cout<<endl;
+    }
 
 
 };

@@ -103,17 +103,20 @@ private:
         return resultEdges;
     }
 
-    Graph GetNoDirecGraph() {
-        if (!IsDirected) return *this;
-        Graph other_direction(false);
+    Graph* GetNoDirecGraph() {
+        if (!IsDirected) return this;
+        map<string,Vertice<Node_type>*> Map_for_graph;
 
         for (auto vertex : Self)
-            other_direction.AddVertex(vertex.first, *Self[vertex.first]->getSelf());
+            Map_for_graph[vertex.first] = new Vertice<Node_type>(vertex.second->getSelf());
 
-        for (auto vertex : Self)
-            for (auto edge : Self[vertex.first]->Lista_de_adyacencia)
-                other_direction.AddEdge(edge->getIdBegin(),edge->getIdEnd(),edge->getWeight());
-        return other_direction;
+        for (auto vertex : Self) {
+            for (auto edge : vertex.second->Lista_de_adyacencia) {
+                Map_for_graph[edge->getIdEnd()]->Lista_de_adyacencia.push_back(edge);
+                Map_for_graph[edge->getIdBegin()]->Lista_de_adyacencia.push_back(edge);
+            }
+        }
+        return new Graph(Map_for_graph,false);
     }
 
     void RefillEdges(vector<Arista*>& allEdges){
@@ -180,8 +183,6 @@ private:
                 RemoveEdge(arista->getIdBegin(), arista->getIdEnd());
     }
 
-    explicit Graph(bool IsDirected) : IsDirected(IsDirected) {}
-
     void DFSUtil(const string& v, map<string,bool> & visited) {
         visited[v] = true;
         vector<Arista*> ListaAdy = Self[v]->Lista_de_adyacencia;
@@ -195,16 +196,17 @@ private:
         }
     }
 
-    Graph getTranspose() {
-        Graph transpose(IsDirected);
-        for (auto vertex : Self)
-            transpose.AddVertex(vertex.first, *Self[vertex.first]->getSelf());
+    Graph* getTranspose() {
+        map<string,Vertice<Node_type>*> Map_for_graph;
 
         for (auto vertex : Self)
-            for (auto edge : Self[vertex.first]->Lista_de_adyacencia)
-                transpose.AddEdge(edge->getIdEnd(), edge->getIdBegin(), edge->getWeight());
+            Map_for_graph[vertex.first] = new Vertice<Node_type>(vertex.second->getSelf());
 
-        return transpose;
+        for (auto vertex : Self)
+            for (auto edge : vertex.second->Lista_de_adyacencia)
+                Map_for_graph[edge->getIdEnd()]->Lista_de_adyacencia.push_back(edge);
+
+        return new Graph (Map_for_graph,true);
     }
     
 
@@ -383,8 +385,10 @@ public:
 
     bool IsConnected() {
         if (IsDirected) {
-            Graph nodirected = this->GetNoDirecGraph();
-            return nodirected.IsConnected();
+            auto no_directed = this->GetNoDirecGraph();
+            bool conexo = no_directed->IsConnected();
+            delete no_directed;
+            return conexo;
         }
         else {
             map<string,bool> visited;
@@ -404,15 +408,16 @@ public:
 
         if (IsDirected && connected) {
             map<string,bool> visited;
-            Graph gr = this->getTranspose();
-            for(auto v : gr.getSelf())
+            auto gr = this->getTranspose();
+            for(auto v : gr->getSelf())
                 visited[v.first] = false;
-            gr.DFSUtil(visited.begin()->first,visited);
+            gr->DFSUtil(visited.begin()->first,visited);
             for (const auto& v : visited)
-                if (!visited.at(v.first))
+                if (!visited.at(v.first)){
+                    delete gr;
                     return false;
+                }
         }
-
         return connected;
     }
 

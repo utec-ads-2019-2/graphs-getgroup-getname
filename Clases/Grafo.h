@@ -51,10 +51,10 @@ private:
     }
 
     vector<Arista*> AlgorithmPrim(const string& verticeArbitrario){
-        //throw runtime_error("Prim no puede ser aplicado en Graphs dirigidos");
+        //throw runtime_error("Prim no puede ser aplicado en grafos dirigidos");
         vector<Arista*> resultEdges;
         if(IsDirected){
-            cout<<"El algoritmo no puede ser aplicado en Graphs dirigidos\n";
+            cout<<"El algoritmo no puede ser aplicado en grafos dirigidos\n";
         }
         else{
             auto it = Self.find(verticeArbitrario);
@@ -266,10 +266,10 @@ public:
         return AlgorithmPrim((*it).first);
     }
     vector<Arista*> Kruskal(){
-        //throw runtime_error("Kruskal no puede ser aplicado en Graphs dirigidos");
+        //throw runtime_error("Kruskal no puede ser aplicado en grafos dirigidos");
         vector<Arista*> resultEdges;
         if(IsDirected){
-            cout<<"El algoritmo no puede ser aplicado en Graphs dirigidos\n";
+            cout<<"El algoritmo no puede ser aplicado en grafos dirigidos\n";
         }
         else{
             vector<Arista*> allEdges;

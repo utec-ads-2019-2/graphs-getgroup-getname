@@ -139,6 +139,7 @@ void TestIsConnected(){
 
     Grafo__no_dirigido->RemoveEdge("I","F");
     Grafo__no_dirigido->RemoveEdge("C","F");
+
     ASSERT(!Grafo__no_dirigido->IsConnected(),"Error en Grafo Conexo");
 
     delete Grafo__no_dirigido;
@@ -151,13 +152,14 @@ void TestIsStronglyConnected(){
     auto Grafo_dirigido=new Graph<Airport>(Parser_1.Generate_Graph());
     auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
 
-    ASSERT(Grafo__no_dirigido->IsStrongConnected(),"Error en Grafo Conexo");
-    //ASSERT(Grafo_dirigido->IsConnected(),"Error en Grafo Conexo");
+    ASSERT(Grafo__no_dirigido->IsStrongConnected(),"Error en Grafo Fuertemente Conexo");
+    //ASSERT(Grafo_dirigido->IsStrongConnected(),"Error en Grafo Fuertemente Conexo");
 
 
     Grafo__no_dirigido->RemoveEdge("I","F");
     Grafo__no_dirigido->RemoveEdge("C","F");
-    ASSERT(!Grafo__no_dirigido->IsStrongConnected(),"Error en Grafo Conexo");
+
+    ASSERT(!Grafo__no_dirigido->IsStrongConnected(),"Error en Grafo Fuertemente Conexo");
 
     delete Grafo__no_dirigido;
     delete Grafo_dirigido;
@@ -173,10 +175,32 @@ void TestIsBipartite(){
 }
 
 void TestPrim(){
-    AirportParser Parser_1("../json_files/airports_connected.json");
+    AirportParser Parser_1("../json_files/airports_mini.json");
     Basic_Parser Parser_2("../json_files/tester.json");
     auto Grafo_dirigido=new Graph<Airport>(Parser_1.Generate_Graph());
     auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
+
+
+    vector<Arista*> PrimResult, PrimExpected=Grafo__no_dirigido->Prim("A");
+
+
+    PrimResult.push_back( new Arista("A","C"));
+    PrimResult.push_back( new Arista("A","H"));
+    PrimResult.push_back( new Arista("D","H"));
+    PrimResult.push_back( new Arista("C","F"));
+    PrimResult.push_back( new Arista("F","I"));
+    PrimResult.push_back( new Arista("A","E"));
+    PrimResult.push_back( new Arista("E","G"));
+    PrimResult.push_back( new Arista("B","G"));
+    PrimResult.push_back( new Arista("H","J"));
+
+
+    for(size_t i=0;i<PrimExpected.size();i++){
+        ASSERT(PrimExpected[i]->getParId()==PrimResult[i]->getParId(),"Error en Prim");
+
+    }
+
+    ASSERT(Grafo_dirigido->Prim().empty(),"Error en Prim");
     delete Grafo__no_dirigido;
     delete Grafo_dirigido;
 }
@@ -186,14 +210,35 @@ void TestKruskal(){
     Basic_Parser Parser_2("../json_files/tester.json");
     auto Grafo_dirigido=new Graph<Airport>(Parser_1.Generate_Graph());
     auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
+
+    vector<Arista*> KruskalResult, KruskalExpected=Grafo__no_dirigido->Kruskal();
+
+    KruskalResult.push_back( new Arista("B","G"));
+    KruskalResult.push_back( new Arista("E","G"));
+    KruskalResult.push_back( new Arista("A","C"));
+    KruskalResult.push_back( new Arista("A","H"));
+    KruskalResult.push_back( new Arista("D","H"));
+    KruskalResult.push_back( new Arista("F","I"));
+    KruskalResult.push_back( new Arista("C","F"));
+    KruskalResult.push_back( new Arista("A","E"));
+    KruskalResult.push_back( new Arista("B","J"));
+
+
+    for(size_t i=0;i<KruskalExpected.size();i++){
+        ASSERT(KruskalExpected[i]->getParId()==KruskalResult[i]->getParId(),"Error en Kruskal");
+
+    }
+
+    ASSERT(Grafo_dirigido->Kruskal().empty(),"Error en Kruskal");
+    
+    
+    
     delete Grafo__no_dirigido;
     delete Grafo_dirigido;
 }
 
 
 int main() {
-
-
 
     ///TEST DE TODOS LOS METODOS EN GRAFOS DIRIGIDOS Y NO DIRIGIDOS
 
@@ -212,15 +257,11 @@ int main() {
 
     TestIsStronglyConnected();
 
-    ///Destructor
+    TestIsBipartite();
 
+    TestPrim();
 
-
-
-
-
-
-
-
+    TestKruskal();
+    
     return 0;
 }

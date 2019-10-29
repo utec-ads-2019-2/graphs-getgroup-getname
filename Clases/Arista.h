@@ -54,6 +54,8 @@ public:
     void setWeight(double d) {
         weight = d;
     }
+
+    ~Arista()= default;
 };
 
 

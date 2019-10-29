@@ -4,8 +4,8 @@
 
 
 class String_class{
+private:
     string Name;
-
 public:
     explicit String_class(string name) : Name(std::move(name)) {}
 
@@ -16,6 +16,8 @@ public:
     static bool is_Directed(){
         return false;
     };
+
+    ~String_class()= default;
 
 };
 

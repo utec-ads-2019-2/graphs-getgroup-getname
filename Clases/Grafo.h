@@ -1,6 +1,7 @@
-#ifndef GRAPHS_GETGROUP_GETNAME_GRAFO_H
-#define GRAPHS_GETGROUP_GETNAME_GRAFO_H
+#ifndef GRAPHS_GETGROUP_GETNAME_Graph_H
+#define GRAPHS_GETGROUP_GETNAME_Graph_H
 #include <map>
+#include <queue>
 #include "Vertice.h"
 #include <set>
 #include <algorithm>
@@ -11,37 +12,37 @@ using namespace std;
 
 
 template<typename Node_type>
-class Grafo{
+class Graph{
 
 private:
     map<string,Vertice<Node_type>*> Self;
 
-    bool is_directed;
+    bool IsDirected;
 
-    void printEdge(const set<string>& parID){
+    void PrintEdge(const set<string>& parID){
         auto Itr = parID.begin();
         cout<<"{ "<<(*Itr)<<" , ";
         ++Itr;
         cout<<(*Itr)<<" } ";
     }
 
-    bool setEmpty(vector<string>* setUnitario){
+    bool SetEmpty(vector<string>* setUnitario){
         return (*setUnitario)[0].empty();
     }
-    void restartVector(vector<string>*& setUnitario,int n){
+    void RestartVector(vector<string>*& setUnitario,int n){
         setUnitario->clear();
         delete setUnitario;
         setUnitario = new vector<string>(n);
     }
 
-    bool findEdge(const vector<Arista*>& allEdges, Arista* edge){
+    bool findEdgeInternal(const vector<Arista*>& allEdges, Arista* edge){
         for (auto & allEdge : allEdges) {
             if(*allEdge == (*edge)) return true;
         }
         return false;
     }
 
-    bool compare_map(const pair<string,string>& pair1,const pair<string,string>& pair2){
+    bool CompareMap(const pair<string,string>& pair1,const pair<string,string>& pair2){
         bool result;
         if(pair1.first== pair2.first and pair1.second==pair2.second)
             return true;
@@ -49,144 +50,231 @@ private:
             return pair1.first == pair2.second and pair1.second == pair2.first;
     }
 
-    void algorithmPrim(const string& verticeArbitrario){
-        //throw runtime_error("Prim no puede ser aplicado en Grafos dirigidos");
-        if(is_directed)
-            cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
+    vector<Arista*> AlgorithmPrim(const string& verticeArbitrario){
+        //throw runtime_error("Prim no puede ser aplicado en Graphs dirigidos");
+        vector<Arista*> resultEdges;
+        if(IsDirected){
+            cout<<"El algoritmo no puede ser aplicado en Graphs dirigidos\n";
+        }
         else{
             auto it = Self.find(verticeArbitrario);
             if(it==Self.end()){
                 cout<<"Vertice no encontrado"<<endl;
-                return;
             }
+            else{
+                multimap<double,Arista*> aristasPosibles;
 
-            map<set<string>,double> aristasPosibles;
-            auto pesoMim = aristasPosibles.end();
-            set<string> verticesInMST;
-            vector<Arista*> ListaAdy;
-            auto setUnitario = new vector<string>(1);
-            verticesInMST.insert((*it).first);
-            while(Self.size() != verticesInMST.size()) {
-                ListaAdy = (*it).second->Lista_de_adyacencia;
+                set<string> verticesInMST;
+                verticesInMST.insert((*it).first); //Vertice Arbitrario
 
-                for (auto & i : ListaAdy) {
-                    aristasPosibles.emplace(i->getParId(), i->getWeight());
-                }
-                if(pesoMim != aristasPosibles.end()) aristasPosibles.erase(pesoMim);
-                do {
-                    pesoMim = aristasPosibles.begin();
-                    for (auto item = aristasPosibles.begin(); item != aristasPosibles.end(); ++item) {
-                        if ((*item).second < (*pesoMim).second) pesoMim = item;
+                set<string> verticesEgde; //Vertices de la arista
+
+                auto setUnitario = new vector<string>(1);
+
+
+                while(Self.size() != verticesInMST.size()) {
+
+                    for (auto& item: (*it).second->Lista_de_adyacencia) {
+                        if(!findEdgeInternal(resultEdges,item)) aristasPosibles.emplace(item->getWeight(),item);
                     }
 
-                    set_difference((*pesoMim).first.begin(), (*pesoMim).first.end(), verticesInMST.begin(),
-                                   verticesInMST.end(), setUnitario->begin());
-                    if(!setEmpty(setUnitario)) break;
-                    else aristasPosibles.erase(pesoMim);
-                }while(true);
+                    do {
+                        verticesEgde = (*aristasPosibles.begin()).second->getParId();
 
-                printEdge((*pesoMim).first);
+                        set_difference(verticesEgde.begin(), verticesEgde.end(), verticesInMST.begin(),
+                                       verticesInMST.end(), setUnitario->begin());
 
-                it = Self.find((*setUnitario)[0]);
-                restartVector(setUnitario,1);
+                        if(!SetEmpty(setUnitario)) break;
+                        else aristasPosibles.erase(aristasPosibles.begin());
 
-                verticesInMST.insert((*pesoMim).first.begin(), (*pesoMim).first.end());
+                    }while(true);
+
+                    it = Self.find((*setUnitario)[0]);
+                    RestartVector(setUnitario,1);
+
+                    resultEdges.push_back((*aristasPosibles.begin()).second);
+                    verticesInMST.insert(verticesEgde.begin(),verticesEgde.end());
+
+                    aristasPosibles.erase(aristasPosibles.begin());
+                }
             }
-
+            return resultEdges;
         }
+        return resultEdges;
     }
 
-    void refillEdges(vector<Arista*>& allEdges){
+    Graph GetNoDirecGraph() {
+        if (!IsDirected) return *this;
+        Graph other_direction(false);
+
+        for (auto vertex : Self)
+            other_direction.AddVertex(vertex.first, *Self[vertex.first]->getSelf());
+
+        for (auto vertex : Self)
+            for (auto edge : Self[vertex.first]->Lista_de_adyacencia)
+                other_direction.AddEdge(edge->getIdBegin(),edge->getIdEnd(),edge->getWeight());
+
+        return other_direction;
+    }
+
+    void RefillEdges(vector<Arista*>& allEdges){
         for(auto it= Self.begin(); it!=Self.end(); ++it){
             auto ListaAdy = (*it).second->Lista_de_adyacencia;
             for(auto itr = ListaAdy.begin(); itr!=ListaAdy.end(); ++itr) {
-                if(!findEdge(allEdges,*itr)) allEdges.push_back(*itr);
+                if(!findEdgeInternal(allEdges,*itr)) allEdges.push_back(*itr);
             }
         }
     }
 
-    multimap<double,Arista*> inOrderEdges(vector<Arista*>& allEdges){
+    multimap<double,Arista*> InOrderEdges(vector<Arista*>& allEdges){
         multimap<double,Arista*> inOrder;
         for(auto item : allEdges){
             inOrder.emplace(item->getWeight(),item);
         }
-
         return inOrder;
     }
 
+    Arista* FindedEdge(string id_1,const string& id_2){
+        vector<Arista*> possibles_edges=Self[id_1]->getLista();
+        for(auto i:possibles_edges){
+            if(CompareMap(i->getPair(),pair<string,string>(id_1,id_2)))
+                return i;
+        }
+        return nullptr;
+    }
+
+    bool RemoveEdgeLogic(const string& Id_1,const string& Id_2, bool want_to_check){
+        if(want_to_check and !FindEdge(Id_1,Id_2))
+            return false;
+        else{
+            Arista* Edge_to_remove=FindedEdge(Id_1,Id_2);
+            long i=0;
+
+            while(i<Self[Id_1]->getLista().size() and Self[Id_1]->getLista()[i]!=Edge_to_remove)
+                i++;
+
+            Self[Id_1]->Lista_de_adyacencia.erase(Self[Id_1]->Lista_de_adyacencia.begin()+i);
+
+            if(!IsDirected){
+                i=0;
+                while(i<Self[Id_2]->getLista().size() and Self[Id_2]->getLista()[i]!=Edge_to_remove)
+                    i++;
+
+                Self[Id_2]->Lista_de_adyacencia.erase(Self[Id_2]->Lista_de_adyacencia.begin()+i);
+            }
+
+            delete Edge_to_remove;
+            return true;
+        }
+    }
+
+    void ClearVertexes(){
+        for(auto i:Self){
+            delete i.second;
+            Self.erase(Self.find(i.first));
+        }
+    }
+
+    void ClearEdges() {
+        for(auto i:Self)
+            for(Arista* arista: i.second->getLista())
+                RemoveEdge(arista->getIdBegin(), arista->getIdEnd());
+    }
+
+    explicit Graph(bool IsDirected) : IsDirected(IsDirected) {}
+
+    void DFSUtil(const string& v, map<string,bool> & visited) {
+        visited[v] = true;
+        vector<Arista*> ListaAdy = Self[v]->Lista_de_adyacencia;
+
+        for (auto i : ListaAdy) {
+            string visit = (i->getIdEnd() == v) ?
+                           i->getIdBegin() : i->getIdEnd();
+            if (!visited[visit]) {
+                DFSUtil(visit, visited);
+            }
+        }
+    }
+
+    Graph getTranspose() {
+        Graph transpose(IsDirected);
+        for (auto vertex : Self)
+            transpose.AddVertex(vertex.first, *Self[vertex.first]->getSelf());
+
+        for (auto vertex : Self)
+            for (auto edge : Self[vertex.first]->Lista_de_adyacencia)
+                transpose.AddEdge(edge->getIdEnd(), edge->getIdBegin(), edge->getWeight());
+
+        return transpose;
+    }
+    
+
+
 public:
-    explicit Grafo( map<string,Vertice<Node_type>*> self, bool is_directed) : Self(self),is_directed(is_directed) {
+    explicit Graph( map<string,Vertice<Node_type>*> self, bool IsDirected) : Self(self),IsDirected(IsDirected) {
     }
 
     map<string, Vertice<Node_type>*>&getSelf() {
         return Self;
     }
 
-    void Agregar_Vertice(const string& ID,Node_type Nodo){
+    void AddVertex(const string& ID,Node_type Nodo){
         auto vertice1= new Vertice<Node_type>(Nodo);
         Self[ID]= vertice1;
     }
 
-    void Agregar_Arista(const string& ID_1,const string& ID_2, double weight){
+    void AddEdge(const string& ID_1,const string& ID_2, double weight){
         if( Self.find(ID_1)==Self.end() or Self.find(ID_2)==Self.end()){
             cout<<"No se pudo insertar la arista, revise los vértices\n";
         }
         else{
             auto arista=new Arista(ID_1,ID_2,weight);
             getSelf()[ID_1]->Lista_de_adyacencia.push_back(arista);
-            if(!is_directed)
+            if(!IsDirected)
                 getSelf()[ID_2]->Lista_de_adyacencia.push_back(arista);
         }
     }
 
-    void Agregar_Arista(const string& ID_1,const string& ID_2){
-        if( Self.find(ID_1)==Self.end() or Self.find(ID_2)==Self.end()){
-            cout<<"No se pudo insertar la arista, revise los vértices\n";
-        }
-        else{
-            auto Self_1=Self[ID_1]->getSelf(); auto Self_2=Self[ID_2]->getSelf();
-
-            auto arista=new Arista(ID_1,ID_2,Node_type::Calculate_weight(*Self_1,*Self_2));
-            getSelf()[ID_1]->Lista_de_adyacencia.push_back(arista);
-            if(!is_directed)
-                getSelf()[ID_2]->Lista_de_adyacencia.push_back(arista);  }
+    void AddEdge(const string& ID_1,const string& ID_2){
+        AddEdge(ID_1,ID_2,Node_type::Calculate_weight(*Self[ID_1]->getSelf(),*Self[ID_2]->getSelf()));
     }
 
-    bool Find_edge(string first_id, const string&  second_id){
+
+
+    bool FindEdge(string first_id, const string&  second_id){
         if( Self.find(first_id)==Self.end() or Self.find(second_id)==Self.end())
             return false;
 
         vector<Arista*> possibles_edges=Self[first_id]->getLista();
         for(auto i:possibles_edges){
-            if(compare_map(i->getPair(),pair<string,string>(first_id,second_id)))
+            if(CompareMap(i->getPair(),pair<string,string>(first_id,second_id)))
                 return true;
         }
         return false;
     }
 
-    bool Find_Vertex(string Id_vertex){
+    bool FindVertex(string Id_vertex){
         return (Self.find(Id_vertex)!=Self.end());
     }
 
 
-
-    void Prim(const string& verticeArbitrario){
-        algorithmPrim(verticeArbitrario);
+    vector<Arista*> Prim(const string& verticeArbitrario){
+        return AlgorithmPrim(verticeArbitrario);
     }
-
-    void Prim(){
+    vector<Arista*> Prim(){
         auto it = Self.begin();
-        algorithmPrim((*it).first);
+        return AlgorithmPrim((*it).first);
     }
-
-    void Kruskal(){
-        //throw runtime_error("Kruskal no puede ser aplicado en Grafos dirigidos");
-        if(is_directed)
-            cout<<"El algoritmo no puede ser aplicado en Grafos dirigidos\n";
+    vector<Arista*> Kruskal(){
+        //throw runtime_error("Kruskal no puede ser aplicado en Graphs dirigidos");
+        vector<Arista*> resultEdges;
+        if(IsDirected){
+            cout<<"El algoritmo no puede ser aplicado en Graphs dirigidos\n";
+        }
         else{
             vector<Arista*> allEdges;
-            refillEdges(allEdges);
-            auto OrderEdges = inOrderEdges(allEdges);
+            RefillEdges(allEdges);
+            auto OrderEdges = InOrderEdges(allEdges);
             allEdges.clear();
 
             DisjointSet<string> ds;
@@ -195,7 +283,6 @@ public:
                 ds.makeSet(vertice.first);
             }
 
-            vector<Arista*> resultEdges;
             string parentA;
             string parentB;
             for(auto item : OrderEdges){
@@ -209,13 +296,34 @@ public:
 
                 if(resultEdges.size() == Self.size()-1) break;
             }
-            for (auto & resultEdge : resultEdges) {
-                printEdge(resultEdge->getParId());
-            }
         }
+        return resultEdges;
+    }
+    
+    void PrintKruskal(){
+        auto resultEdges = Kruskal();
+        for(auto& item: resultEdges){
+            PrintEdge(item->getParId());
+        }
+        cout<<endl;
+    }
+    void PrintPrim(string verticeArbitrario){
+        auto resultEdges = Prim(verticeArbitrario);
+        for (auto & item : resultEdges) {
+            PrintEdge(item->getParId());
+        }
+        cout<<endl;
+    }
+    void PrintPrim(){
+        auto resultEdges = Prim();
+        for (auto & item : resultEdges) {
+            PrintEdge(item->getParId());
+        }
+        cout<<endl;
     }
 
-    float Get_Density(){
+
+    float GetDensity(){
         int numero_de_vertices=Self.size();
 
         if(numero_de_vertices<=1)
@@ -231,19 +339,118 @@ public:
         }
         float density=float(no_rep_edges.size())/
                    float((numero_de_vertices*(numero_de_vertices-1)));
-        if(!is_directed)
+        if(!IsDirected)
             density*=2;
 
         return density;
     }
 
-    bool Is_Dense(){
-        return (Get_Density()>=0.5);
+    bool IsDense(float Cota){
+        return (GetDensity()>=Cota);
     }
 
+    bool RemoveEdge(const string& Id_1,const string& Id_2){
+        return RemoveEdgeLogic(Id_1,Id_2, true);
+    }
+
+    bool RemoveVertex(string ID){
+        if(!FindVertex(ID)){
+            return false;
+        }
+        else{
+            while(!Self[ID]->Lista_de_adyacencia.empty()){
+                if(ID==Self[ID]->Lista_de_adyacencia[0]->getIdBegin())
+                    RemoveEdgeLogic(ID,Self[ID]->Lista_de_adyacencia[0]->getIdEnd(), true);
+                else
+                    RemoveEdgeLogic(ID,Self[ID]->Lista_de_adyacencia[0]->getIdBegin(),true);
+            }
+
+            delete Self[ID];
+            Self.erase(Self.find(ID));
+
+            if(IsDirected){
+                for(auto i:Self){
+                    vector<Arista*> possibles_edges=i.second->Lista_de_adyacencia;
+                    for(Arista* arista: possibles_edges){
+                        if(arista->getIdEnd()==ID)
+                            RemoveEdgeLogic(arista->getIdBegin(),ID, false);
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+
+    bool IsConnected() {
+        if (IsDirected) {
+            Graph nodirected = this->GetNoDirecGraph();
+            return nodirected.IsConnected();
+        }
+        else {
+            map<string,bool> visited;
+            for (auto v : Self)
+                visited[v.first] = false;
+
+            DFSUtil(visited.begin()->first,visited);
+            for (const auto& v : visited)
+                if (!visited.at(v.first))
+                    return false;
+            return true;
+        }
+    }
+
+    bool IsStrongConnected() {
+        bool connected = this->IsConnected();
+
+        if (IsDirected && connected) {
+            map<string,bool> visited;
+            Graph gr = this->getTranspose();
+            for(auto v : gr.getSelf())
+                visited[v.first] = false;
+            gr.DFSUtil(visited.begin()->first,visited);
+            for (const auto& v : visited)
+                if (!visited.at(v.first))
+                    return false;
+        }
+
+        return connected;
+    }
+
+    bool IsBipartite() {
+        map<string,int> colored;
+        for (auto node : Self)
+            colored[node.first] = -1;
+
+        colored[colored.begin()->first] = 1;
+        queue <string> cola;
+        cola.push(colored.begin()->first);
+
+        while (!cola.empty()) {
+            string U = cola.front();
+            cola.pop();
+
+            for (auto edge : Self[U]->Lista_de_adyacencia) {
+                string visit = (edge->getIdEnd() == U) ?
+                               edge->getIdBegin() : edge->getIdEnd();
+                if(colored[visit] == -1) {
+                    colored[visit] = 1 - colored[U];
+                    cola.push(visit);
+                } else
+                if (colored[visit] == colored[U])
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    ~Graph(){
+        ClearEdges();
+        ClearVertexes();
+    }
 
 
 };
 
 
-#endif //GRAPHS_GETGROUP_GETNAME_GRAFO_H
+#endif //GRAPHS_GETGROUP_GETNAME_Graph_H

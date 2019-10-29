@@ -26,6 +26,10 @@ public:
     Vertice(){
         self=nullptr;
     };
+
+    ~Vertice(){
+        delete self;
+    }
 };
 
 

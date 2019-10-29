@@ -113,7 +113,6 @@ private:
         for (auto vertex : Self)
             for (auto edge : Self[vertex.first]->Lista_de_adyacencia)
                 other_direction.AddEdge(edge->getIdBegin(),edge->getIdEnd(),edge->getWeight());
-
         return other_direction;
     }
 
@@ -236,7 +235,8 @@ public:
     }
 
     void AddEdge(const string& ID_1,const string& ID_2){
-        AddEdge(ID_1,ID_2,Node_type::Calculate_weight(*Self[ID_1]->getSelf(),*Self[ID_2]->getSelf()));
+        if(FindVertex(ID_1) and FindVertex(ID_2))
+            AddEdge(ID_1,ID_2,Node_type::Calculate_weight(*Self[ID_1]->getSelf(),*Self[ID_2]->getSelf()));
     }
 
 
@@ -381,7 +381,6 @@ public:
         }
     }
 
-
     bool IsConnected() {
         if (IsDirected) {
             Graph nodirected = this->GetNoDirecGraph();
@@ -443,6 +442,7 @@ public:
         }
         return true;
     }
+
 
     ~Graph(){
         ClearEdges();

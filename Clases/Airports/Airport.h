@@ -35,9 +35,6 @@ public:
         return Latitude;
     }
 
-    static bool is_Directed(){
-        return true;
-    };
 
     static double Calculate_weight(const Airport& airport1,const Airport& airport2){
 

@@ -174,8 +174,8 @@ private:
     void ClearVertexes(){
         for(auto i:Self){
             delete i.second;
-            Self.erase(Self.find(i.first));
         }
+        Self.clear();
     }
 
     void ClearEdges() {
@@ -414,7 +414,7 @@ public:
             gr->DFSUtil(visited.begin()->first,visited);
             for (const auto& v : visited)
                 if (!visited.at(v.first)){
-                    delete gr;
+                    //delete gr;
                     return false;
                 }
         }

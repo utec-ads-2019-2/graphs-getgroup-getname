@@ -414,7 +414,6 @@ public:
             gr->DFSUtil(visited.begin()->first,visited);
             for (const auto& v : visited)
                 if (!visited.at(v.first)){
-                    delete gr;
                     return false;
                 }
         }

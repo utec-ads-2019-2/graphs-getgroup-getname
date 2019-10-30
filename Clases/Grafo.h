@@ -53,9 +53,17 @@ private:
     vector<Arista*> AlgorithmPrim(const string& verticeArbitrario){
         //throw runtime_error("Prim no puede ser aplicado en grafos dirigidos");
         vector<Arista*> resultEdges;
+
+        if(!IsConnected()){
+            cout<<"El algoritmo no puede ser aplicado en grafos no conexos\n";
+            return resultEdges;
+        }
+
+
         if(IsDirected){
             cout<<"El algoritmo no puede ser aplicado en grafos dirigidos\n";
         }
+
         else{
             auto it = Self.find(verticeArbitrario);
             if(it==Self.end()){
@@ -274,6 +282,7 @@ public:
         if(IsDirected){
             cout<<"El algoritmo no puede ser aplicado en grafos dirigidos\n";
         }
+
         else{
             vector<Arista*> allEdges;
             RefillEdges(allEdges);

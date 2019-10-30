@@ -107,8 +107,9 @@ private:
         if (!IsDirected) return this;
         map<string,Vertice<Node_type>*> Map_for_graph;
 
-        for (auto vertex : Self)
-            Map_for_graph[vertex.first] = new Vertice<Node_type>(vertex.second->getSelf());
+        for (auto vertex : Self){
+            Map_for_graph[vertex.first] = new Vertice<Node_type>(Vertice<Node_type>(*vertex.second->getSelf()));
+        }
 
         for (auto vertex : Self) {
             for (auto edge : vertex.second->Lista_de_adyacencia) {
@@ -200,7 +201,7 @@ private:
         map<string,Vertice<Node_type>*> Map_for_graph;
 
         for (auto vertex : Self)
-            Map_for_graph[vertex.first] = new Vertice<Node_type>(vertex.second->getSelf());
+            Map_for_graph[vertex.first] = new Vertice<Node_type>(Vertice<Node_type>(*vertex.second->getSelf()));
 
         for (auto vertex : Self)
             for (auto edge : vertex.second->Lista_de_adyacencia)
@@ -385,9 +386,8 @@ public:
 
     bool IsConnected() {
         if (IsDirected) {
-            auto no_directed = this->GetNoDirecGraph();
+            auto no_directed = GetNoDirecGraph();
             bool conexo = no_directed->IsConnected();
-            delete no_directed;
             return conexo;
         }
         else {

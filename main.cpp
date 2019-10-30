@@ -134,42 +134,62 @@ void TestIsConnected(){
     auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
 
     ASSERT(Grafo__no_dirigido->IsConnected(),"Error en Grafo Conexo");
-    //ASSERT(Grafo_dirigido->IsConnected(),"Error en Grafo Conexo");
+    ASSERT(Grafo_dirigido->IsConnected(),"Error en Grafo Conexo");
 
 
     Grafo__no_dirigido->RemoveEdge("I","F");
     Grafo__no_dirigido->RemoveEdge("C","F");
 
+    Grafo_dirigido->RemoveEdge("3","4");
+    Grafo_dirigido->RemoveEdge("1","2");
+
     ASSERT(!Grafo__no_dirigido->IsConnected(),"Error en Grafo Conexo");
+    ASSERT(!Grafo_dirigido->IsConnected(),"Error en Grafo Conexo");
 
     delete Grafo__no_dirigido;
     delete Grafo_dirigido;
 }
 
 void TestIsStronglyConnected(){
-    AirportParser Parser_1("../json_files/airports_connected.json");
+    AirportParser Parser_1("../json_files/airports_strong.json");
     Basic_Parser Parser_2("../json_files/tester.json");
     auto Grafo_dirigido=new Graph<Airport>(Parser_1.Generate_Graph());
     auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
 
     ASSERT(Grafo__no_dirigido->IsStrongConnected(),"Error en Grafo Fuertemente Conexo");
-    //ASSERT(Grafo_dirigido->IsStrongConnected(),"Error en Grafo Fuertemente Conexo");
+    ASSERT(Grafo_dirigido->IsStrongConnected(),"Error en Grafo Fuertemente Conexo");
 
 
     Grafo__no_dirigido->RemoveEdge("I","F");
     Grafo__no_dirigido->RemoveEdge("C","F");
 
+    Grafo_dirigido->RemoveEdge("6","1");
+    Grafo_dirigido->RemoveEdge("1","2");
+    Grafo_dirigido->RemoveEdge("2","1");
+
     ASSERT(!Grafo__no_dirigido->IsStrongConnected(),"Error en Grafo Fuertemente Conexo");
+    ASSERT(!Grafo_dirigido->IsStrongConnected(),"Error en Grafo Fuertemente Conexo");
 
     delete Grafo__no_dirigido;
     delete Grafo_dirigido;
 }
 
 void TestIsBipartite(){
-    AirportParser Parser_1("../json_files/airports_connected.json");
-    Basic_Parser Parser_2("../json_files/tester.json");
+    AirportParser Parser_1("../json_files/airports_bipartite.json");
+    Basic_Parser Parser_2("../json_files/tester_for_bipartite.json");
     auto Grafo_dirigido=new Graph<Airport>(Parser_1.Generate_Graph());
     auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
+
+    ASSERT(Grafo__no_dirigido->IsBipartite(),"Error en Grafo Bipartito");
+    ASSERT(Grafo_dirigido->IsBipartite(),"Error en Grafo Bipartito");
+
+    Grafo_dirigido->AddEdge("6","4");
+    Grafo__no_dirigido->AddEdge("F","G");
+
+    ASSERT(!Grafo__no_dirigido->IsBipartite(),"Error en Grafo Bipartito");
+    ASSERT(!Grafo_dirigido->IsBipartite(),"Error en Grafo Bipartito");
+
+
     delete Grafo__no_dirigido;
     delete Grafo_dirigido;
 }
@@ -230,8 +250,7 @@ void TestKruskal(){
     }
 
     ASSERT(Grafo_dirigido->Kruskal().empty(),"Error en Kruskal");
-    
-    
+        
     
     delete Grafo__no_dirigido;
     delete Grafo_dirigido;
@@ -263,5 +282,5 @@ int main() {
 
     TestKruskal();
     
-    return 0;
+    return EXIT_SUCCESS;
 }

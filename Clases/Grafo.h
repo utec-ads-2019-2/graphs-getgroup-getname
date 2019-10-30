@@ -180,10 +180,9 @@ private:
     }
 
     void ClearVertexes(){
-        for(auto i:Self){
+        for(auto i:Self)
             delete i.second;
-            Self.erase(Self.find(i.first));
-        }
+        Self.clear();
     }
 
     void ClearEdges() {

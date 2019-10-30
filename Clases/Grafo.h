@@ -53,9 +53,17 @@ private:
     vector<Arista*> AlgorithmPrim(const string& verticeArbitrario){
         //throw runtime_error("Prim no puede ser aplicado en grafos dirigidos");
         vector<Arista*> resultEdges;
+
+        if(!IsConnected()){
+            cout<<"El algoritmo no puede ser aplicado en grafos no conexos\n";
+            return resultEdges;
+        }
+
+
         if(IsDirected){
             cout<<"El algoritmo no puede ser aplicado en grafos dirigidos\n";
         }
+
         else{
             auto it = Self.find(verticeArbitrario);
             if(it==Self.end()){
@@ -172,9 +180,8 @@ private:
     }
 
     void ClearVertexes(){
-        for(auto i:Self){
+        for(auto i:Self)
             delete i.second;
-        }
         Self.clear();
     }
 
@@ -274,6 +281,7 @@ public:
         if(IsDirected){
             cout<<"El algoritmo no puede ser aplicado en grafos dirigidos\n";
         }
+
         else{
             vector<Arista*> allEdges;
             RefillEdges(allEdges);
@@ -414,7 +422,6 @@ public:
             gr->DFSUtil(visited.begin()->first,visited);
             for (const auto& v : visited)
                 if (!visited.at(v.first)){
-                    //delete gr;
                     return false;
                 }
         }
@@ -446,6 +453,16 @@ public:
             }
         }
         return true;
+    }
+
+    unsigned int GetNumberOfEdgesGraph(){
+        unsigned int num=0;
+        for(auto i : Self){
+            num+=i.second->GetNumberOfEdgesVertex();
+        }
+        if(!IsDirected) num/=2;
+
+        return num;
     }
 
 

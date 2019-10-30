@@ -23,6 +23,7 @@ void TestConstructorAndLoadFromFile(){
     auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
     ASSERT(Grafo_dirigido!= nullptr,"Constructor con errores");
     ASSERT(Grafo__no_dirigido!= nullptr,"Constructor con errores");
+    ASSERT(Grafo__no_dirigido->GetNumberOfEdgesGraph() == 20, "Incorrecto numero de aristas");
     delete Grafo__no_dirigido;
     delete Grafo_dirigido;
 }

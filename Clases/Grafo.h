@@ -494,6 +494,7 @@ public:
         Graph<Node_type> arbolMinimosRecorridos(this->getIsDirected());
 
         if(!IsConnected()) cout <<"No es posible aplicarlo en grafos no conexos"<<endl;
+
         else {
             arbolMinimosRecorridos.AddVertex(startVertex,*(Self[startVertex]->getSelf()));
             auto cmpPair =[](const my_pair& A,const my_pair& B){ return A.second < B.second; };

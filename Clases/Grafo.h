@@ -128,6 +128,14 @@ private:
         return new Graph(Map_for_graph,false);
     }
 
+    double Distance(string A, string B){
+        if (A == B) return 0;
+        for (auto e : Self[A]->Lista_de_adyacencia) {
+            if (e->getIdEnd() == B) return e->getWeight();
+        }
+        return INT32_MAX;
+    }
+
     void RefillEdges(vector<Arista*>& allEdges){
         for(auto it= Self.begin(); it!=Self.end(); ++it){
             auto ListaAdy = (*it).second->Lista_de_adyacencia;
@@ -453,6 +461,52 @@ public:
             }
         }
         return true;
+    }
+
+    vector<vector<double>> FloydWarshall() {
+        if (!IsDirected)
+            throw std::invalid_argument("El algoritmo solo puede ser aplicado en grafos dirigidos");
+
+        vector<string> keys;
+        for (auto s : Self)
+            keys.push_back(s.first);
+
+        vector<vector<double>> dist;
+        int n = Self.size();
+        for (int i = 0; i < n; ++i) {
+            vector<double> row;
+            dist.push_back(row);
+            for (int j = 0; j < n; ++j) {
+                double value = Distance(keys[i],keys[j]);
+                dist[i].push_back(value);
+            }
+        }
+        for (int k = 0; k < n; ++k)
+            for (int i = 0; i < n; ++i)
+                for (int j = 0; j < n; ++j) {
+                    if (dist[i][k] + dist[k][j] < dist[i][j])
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                }
+        return dist;
+    }
+
+    void PrintFloydWarshall() {
+        auto FWmtx = FloydWarshall();
+        cout << "\\ \t";
+        vector<string> keys;
+        for (auto s : Self) {
+            keys.push_back(s.first);
+            cout << "(" << s.first << ")\t";
+        }
+        cout << endl;
+        int n = Self.size();
+        for (int i = 0; i < n; ++i) {
+            cout << "(" << keys[i] << ")\t";
+            for (int j = 0; j < n; ++j) {
+                if (FWmtx[i][j] == INT32_MAX) cout << "INF\t";
+                else cout << FWmtx[i][j] << "\t";
+            } cout << endl;
+        }
     }
 
     unsigned int GetNumberOfEdgesGraph(){

@@ -16,6 +16,11 @@ public:
         return toCompare.getParId() == getParId();
     }
 
+    string vertexAdy(string vertex){
+        if(vertex == Id_begin) return Id_End;
+        return Id_begin;
+    }
+
     string getIdBegin() const {
         return Id_begin;
     }

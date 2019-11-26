@@ -5,7 +5,6 @@
 #include "Arista.h"
 using namespace std;
 template<typename Node_type>
-
 class Vertice {
 public:
     Node_type* self;

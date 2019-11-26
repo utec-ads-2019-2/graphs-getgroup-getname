@@ -7,6 +7,8 @@
 #include <algorithm>
 #include "Arista.h"
 #include "DisjoinSet.h"
+#include <cfloat>
+#include <algorithm>
 using namespace std;
 
 
@@ -15,6 +17,9 @@ template<typename Node_type>
 class Graph{
 
 private:
+
+    typedef pair<Arista,double> my_pair;
+
     map<string,Vertice<Node_type>*> Self;
 
     bool IsDirected;
@@ -219,8 +224,8 @@ private:
     }
 
 public:
-    explicit Graph( map<string,Vertice<Node_type>*> self, bool IsDirected) : Self(self),IsDirected(IsDirected) {
-    }
+    explicit Graph( map<string,Vertice<Node_type>*> self, bool IsDirected) : Self(self),IsDirected(IsDirected) {}
+    explicit Graph(bool IsDirected): IsDirected(IsDirected){}
 
     map<string, Vertice<Node_type>*>&getSelf() {
         return Self;
@@ -459,6 +464,97 @@ public:
         if(!IsDirected) num/=2;
 
         return num;
+    }
+
+    bool getIsDirected(){
+        return IsDirected;
+    }
+
+    unsigned long long int getNumVertex(){
+        return Self.size();
+    }
+
+    void addQueuePriority(vector<my_pair>& qp, string IDbegin, string IDend, double weight, double dist){
+        for ( auto& item : qp) {
+            if(IDend == item.first.getIdEnd()){
+                item.first = Arista(IDbegin,IDend,weight);
+                item.second = dist;
+                return;
+            }
+        }
+        qp.emplace_back(Arista(IDbegin,IDend,weight),dist);
+    }
+
+    void refillqp(string IDvertex, vector<my_pair>& qp, map<string,double>& verticesDistancias){
+        auto listaAdy = Self[IDvertex]->getLista();
+        string IDvertexAdy;
+
+        auto cmpPair =[](const my_pair& A,const my_pair& B){ return A.second < B.second; };
+
+        for(int i = 0; i < listaAdy.size(); ++i){
+            IDvertexAdy = listaAdy[i]->vertexAdy(IDvertex);
+            verticesDistancias[IDvertexAdy] = verticesDistancias[IDvertex] + listaAdy[i]->getWeight();
+            qp.emplace_back(Arista(IDvertex,IDvertexAdy,listaAdy[i]->getWeight()),verticesDistancias[IDvertexAdy]);
+        }
+        sort(qp.begin(),qp.end(),cmpPair);
+    }
+
+    string nextVertex(Graph<Node_type>& grafo, Arista& e){
+        if(!grafo.FindVertex(e.getIdBegin())) return e.getIdBegin();
+        return e.getIdEnd();
+    }
+
+    Graph Dijkstra(string startVertex){
+        Graph<Node_type> arbolMinimosRecorridos(this->getIsDirected());
+
+        if(!IsConnected()) cout <<"No es posible aplicarlo en grafos no conexos"<<endl;
+        else {
+            arbolMinimosRecorridos.AddVertex(startVertex,*(Self[startVertex]->getSelf()));
+            auto cmpPair =[](const my_pair& A,const my_pair& B){ return A.second < B.second; };
+
+            string IDvertex;
+            string IDvertexAdy;
+
+            vector<my_pair> queuePriority;
+            map<string, bool> verticesVisitados;
+            map<string, double> verticesDistancias;
+
+            for (auto it = Self.cbegin(); it != Self.cend(); ++it) {
+                verticesDistancias.emplace(it->first, DBL_MAX);
+                verticesVisitados.emplace(it->first,false);
+            }
+            verticesDistancias[startVertex] = 0;
+
+            verticesVisitados[startVertex] = true;
+            refillqp(startVertex,queuePriority,verticesDistancias);
+
+            while(arbolMinimosRecorridos.getNumVertex() != this->getNumVertex()){
+
+                IDvertex = nextVertex(arbolMinimosRecorridos,queuePriority.begin()->first);
+
+                arbolMinimosRecorridos.AddVertex(IDvertex,*(Self[IDvertex]->getSelf()));
+                arbolMinimosRecorridos.AddEdge(queuePriority.begin()->first.getIdBegin(),queuePriority.begin()->first.getIdEnd(),queuePriority.begin()->first.getWeight());
+                //PrintEdge(queuePriority.begin()->first.getParId()); OPCIONAL
+
+                queuePriority.erase(queuePriority.begin());
+
+                verticesVisitados[IDvertex] = true;
+                auto listaAdy = Self[IDvertex]->getLista();
+
+                for(int i = 0; i < listaAdy.size(); ++i){
+                    IDvertexAdy = listaAdy[i]->vertexAdy(IDvertex);
+
+                    if(!verticesVisitados[IDvertexAdy]){
+                        if (verticesDistancias[IDvertexAdy] > verticesDistancias[IDvertex] + listaAdy[i]->getWeight()){
+                            verticesDistancias[IDvertexAdy] = verticesDistancias[IDvertex] + listaAdy[i]->getWeight();
+                            addQueuePriority(queuePriority,IDvertex, IDvertexAdy, listaAdy[i]->getWeight(),verticesDistancias[IDvertexAdy]);
+                        }
+                    }
+                }
+                sort(queuePriority.begin(),queuePriority.end(),cmpPair);
+            }
+        }
+        return arbolMinimosRecorridos;
     }
 
     ~Graph(){

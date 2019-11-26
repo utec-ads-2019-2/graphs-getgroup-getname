@@ -9,7 +9,7 @@ class Basic_Parser {
 public:
     explicit Basic_Parser(string archivo) : archivo(std::move(archivo)) {}
 
-    Grafo<String_class> Generate_Graph(){
+    Graph<String_class> Generate_Graph(){
         map<string,Vertice<String_class>*> Map_for_graph;
         ifstream ifs(archivo); IStreamWrapper isw(ifs); Document d; d.ParseStream(isw);
 
@@ -21,20 +21,21 @@ public:
             Map_for_graph[vertice1->getSelf()->getName()]=vertice1;
         }
 
-        Grafo<String_class> Grafo1(Map_for_graph, false);
+        Graph<String_class> Graph1(Map_for_graph, false);
 
 
         Value& aristas= d["Aristas"];
         for (size_t i=0; i<aristas.Size(); i++) {
             auto vertice1=aristas[i][0].GetString();auto vertice2=aristas[i][1].GetString();
             auto arista=new Arista(vertice1,vertice2,aristas[i][2].GetInt());
-            Grafo1.getSelf()[vertice1]->Lista_de_adyacencia.push_back(arista);
-            Grafo1.getSelf()[vertice2]->Lista_de_adyacencia.push_back(arista);
+            Graph1.getSelf()[vertice1]->Lista_de_adyacencia.push_back(arista);
+            Graph1.getSelf()[vertice2]->Lista_de_adyacencia.push_back(arista);
         }
 
-        return Grafo1;
+        return Graph1;
     }
 
+    ~Basic_Parser()= default;
 };
 
 

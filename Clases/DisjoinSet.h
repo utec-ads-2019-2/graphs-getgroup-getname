@@ -13,7 +13,7 @@ private:
         int rank;
         Node* parent;
 
-        Node(T data) : data(data), rank(0), parent(this){};
+        explicit Node(T data) : data(data), rank(0), parent(this){};
     };
 
     map<T, Node*> nodes;
@@ -25,7 +25,7 @@ private:
         return node->parent;
     }
 public:
-    DisjointSet(){};
+    DisjointSet()= default;;
     void makeSet(T Id){
         Node* node = new Node(Id);
         nodes[Id]=node;

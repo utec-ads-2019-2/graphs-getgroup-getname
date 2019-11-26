@@ -4,8 +4,8 @@
 
 
 class String_class{
+private:
     string Name;
-
 public:
     explicit String_class(string name) : Name(std::move(name)) {}
 
@@ -13,9 +13,10 @@ public:
         return Name;
     }
 
-    static bool is_Directed(){
-        return false;
-    };
+    static double Calculate_weight(const String_class& id1,const String_class& id2){
+        return double();
+    }
+    ~String_class()= default;
 
 };
 

@@ -17,7 +17,7 @@ public:
     explicit AirportParser(string file):archivo(std::move(file)){
     }
 
-    Grafo<Airport> Generate_Graph(){
+    Graph<Airport> Generate_Graph(){
         map<string,Vertice<Airport>*> Map_for_graph;
         ifstream ifs(archivo); IStreamWrapper isw(ifs); Document d; d.ParseStream(isw);
         for(auto itr = d.Begin(); itr != d.End() ;++itr){
@@ -26,7 +26,8 @@ public:
             int Id=stoi((*itr)["Id"].GetString());
 
 
-            const Value& a = (*itr)["destinations"]; vector<Arista*> aristas;
+            const Value& a = (*itr)["destinations"];
+            vector<Arista*> aristas;
 
             for (SizeType i = 0; i < a.Size(); i++){
                 auto arista= new Arista((*itr)["Id"].GetString(), a[i].GetString());
@@ -47,9 +48,11 @@ public:
         }
 
 
-        Grafo<Airport> Grafo1(Map_for_graph,true);
-        return Grafo1;
+        Graph<Airport> Graph1(Map_for_graph,true);
+        return Graph1;
     }
+
+    ~AirportParser()= default;
 
 };
 

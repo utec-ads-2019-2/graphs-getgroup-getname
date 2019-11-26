@@ -54,7 +54,11 @@ public:
     void setWeight(double d) {
         weight = d;
     }
+
+    ~Arista()= default;
 };
 
 
 #endif //GRAPHS_GETGROUP_GETNAME_ARISTA_DIRIGIDA_H
+
+

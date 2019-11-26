@@ -535,7 +535,7 @@ public:
 
                 arbolMinimosRecorridos.AddVertex(IDvertex,*(Self[IDvertex]->getSelf()));
                 arbolMinimosRecorridos.AddEdge(queuePriority.begin()->first.getIdBegin(),queuePriority.begin()->first.getIdEnd(),queuePriority.begin()->first.getWeight());
-                //PrintEdge(queuePriority.begin()->first.getParId()); //OPCIONAL
+                PrintEdge(queuePriority.begin()->first.getParId()); //OPCIONAL
 
                 queuePriority.erase(queuePriority.begin());
             }
@@ -543,6 +543,9 @@ public:
         return arbolMinimosRecorridos;
     }
 
+    Graph Astar(){
+
+    }
     ~Graph(){
         ClearEdges();
         ClearVertexes();

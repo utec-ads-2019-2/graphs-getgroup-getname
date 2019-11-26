@@ -509,6 +509,42 @@ public:
         }
     }
 
+    map <string,double> BellmanFord(const string& origen) {
+        if (!IsDirected)
+            throw std::invalid_argument("El algoritmo solo puede ser aplicado en grafos dirigidos");
+
+        map <string,double> dist;
+        for (auto v : Self)
+            dist[v.first] = INT32_MAX;
+        dist.at(origen) = 0;
+
+        for (int i = 0; i < Self.size()-1; ++i)
+            for (auto s : Self)
+                for (auto e : Self[s.first]->Lista_de_adyacencia) {
+                    string u = e->getIdBegin(), v = e->getIdEnd();
+                    double w = e->getWeight();
+                    if (dist[u] != INT32_MAX && dist[u] + w < dist[v])
+                        dist[v] = dist[u] + w;
+                }
+
+        for (auto s : Self)
+            for (auto e : Self[s.first]->Lista_de_adyacencia) {
+                string u = e->getIdBegin(), v = e->getIdEnd();
+                double w = e->getWeight();
+                if (dist[u] != INT32_MAX && dist[u] + w < dist[v])
+                    throw std::invalid_argument("El grafo contiene un ciclo de peso negativo");
+            }
+
+        return dist;
+    }
+
+    void PrintBellmanFord(const string& origen) {
+        auto dist = this->BellmanFord(origen);
+        cout << "Vertex\t Distance from Source\n";
+        for (auto v : Self)
+            cout << v.first << "\t\t" << dist[v.first] << endl;
+    }
+
     unsigned int GetNumberOfEdgesGraph(){
         unsigned int num=0;
         for(auto i : Self){

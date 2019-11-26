@@ -485,20 +485,6 @@ public:
         qp.emplace_back(Arista(IDbegin,IDend,weight),dist);
     }
 
-    void refillqp(string IDvertex, vector<my_pair>& qp, map<string,double>& verticesDistancias){
-        auto listaAdy = Self[IDvertex]->getLista();
-        string IDvertexAdy;
-
-        auto cmpPair =[](const my_pair& A,const my_pair& B){ return A.second < B.second; };
-
-        for(int i = 0; i < listaAdy.size(); ++i){
-            IDvertexAdy = listaAdy[i]->vertexAdy(IDvertex);
-            verticesDistancias[IDvertexAdy] = verticesDistancias[IDvertex] + listaAdy[i]->getWeight();
-            qp.emplace_back(Arista(IDvertex,IDvertexAdy,listaAdy[i]->getWeight()),verticesDistancias[IDvertexAdy]);
-        }
-        sort(qp.begin(),qp.end(),cmpPair);
-    }
-
     string nextVertex(Graph<Node_type>& grafo, Arista& e){
         if(!grafo.FindVertex(e.getIdBegin())) return e.getIdBegin();
         return e.getIdEnd();
@@ -525,18 +511,9 @@ public:
             }
             verticesDistancias[startVertex] = 0;
 
-            verticesVisitados[startVertex] = true;
-            refillqp(startVertex,queuePriority,verticesDistancias);
+            IDvertex = startVertex;
 
             while(arbolMinimosRecorridos.getNumVertex() != this->getNumVertex()){
-
-                IDvertex = nextVertex(arbolMinimosRecorridos,queuePriority.begin()->first);
-
-                arbolMinimosRecorridos.AddVertex(IDvertex,*(Self[IDvertex]->getSelf()));
-                arbolMinimosRecorridos.AddEdge(queuePriority.begin()->first.getIdBegin(),queuePriority.begin()->first.getIdEnd(),queuePriority.begin()->first.getWeight());
-                //PrintEdge(queuePriority.begin()->first.getParId()); OPCIONAL
-
-                queuePriority.erase(queuePriority.begin());
 
                 verticesVisitados[IDvertex] = true;
                 auto listaAdy = Self[IDvertex]->getLista();
@@ -552,6 +529,14 @@ public:
                     }
                 }
                 sort(queuePriority.begin(),queuePriority.end(),cmpPair);
+
+                IDvertex = nextVertex(arbolMinimosRecorridos,queuePriority.begin()->first);
+
+                arbolMinimosRecorridos.AddVertex(IDvertex,*(Self[IDvertex]->getSelf()));
+                arbolMinimosRecorridos.AddEdge(queuePriority.begin()->first.getIdBegin(),queuePriority.begin()->first.getIdEnd(),queuePriority.begin()->first.getWeight());
+                //PrintEdge(queuePriority.begin()->first.getParId()); //OPCIONAL
+
+                queuePriority.erase(queuePriority.begin());
             }
         }
         return arbolMinimosRecorridos;

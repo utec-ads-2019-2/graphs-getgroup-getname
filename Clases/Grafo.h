@@ -87,7 +87,7 @@ private:
                     }
 
                     do {
-                        verticesEgde = (*aristasPosibles.begin()).second->getPair();
+                        verticesEgde = (*aristasPosibles.begin()).second->getParId();
 
                         set_difference(verticesEgde.begin(), verticesEgde.end(), verticesInMST.begin(),
                                        verticesInMST.end(), setUnitario->begin());

@@ -4,28 +4,27 @@
 #include <queue>
 #include "Vertex.h"
 #include <set>
-#include <stack>
 #include <algorithm>
-#include <iostream>
+//#include "Algorithm_Astart.h"
 #include "Edge.h"
 #include "DisjoinSet.h"
+#include <cfloat>
+#include <stack>
+#include <queue>
 using namespace std;
-
-
 
 template<typename Node_type>
 class Graph{
-
 private:
+
+    typedef pair<Edge,double> my_pair;
+
     map<string,Vertex<Node_type>*> Self;
 
     bool IsDirected;
 
-    void PrintEdge(const set<string>& parID){
-        auto Itr = parID.begin();
-        cout<<"{ "<<(*Itr)<<" , ";
-        ++Itr;
-        cout<<(*Itr)<<" } ";
+    void PrintEdge(const pair<string,string>& parID){
+        cout<<"{ "<<parID.first<<" , "<<parID.second<<" } ";
     }
 
     bool SetEmpty(vector<string>* setUnitario){
@@ -62,7 +61,6 @@ private:
             return resultEdges;
         }
 
-
         if(IsDirected){
             cout<<"El algoritmo no puede ser aplicado en grafos dirigidos\n";
         }
@@ -86,6 +84,7 @@ private:
                 while(Self.size() != verticesInMST.size()) {
 
                     for (auto& item: (*it).second->Lista_de_adyacencia) {
+
                         if(!findEdgeInternal(resultEdges,item)) aristasPosibles.emplace(item->getWeight(),item);
                     }
 
@@ -148,7 +147,7 @@ private:
         return inOrder;
     }
 
-    Edge* FindedEdge(string id_1, const string& id_2){
+    Edge* FindedEdge(string id_1,const string& id_2){
         vector<Edge*> possibles_edges=Self[id_1]->getLista();
         for(auto i:possibles_edges){
             if(CompareMap(i->getPair(),pair<string,string>(id_1,id_2)))
@@ -161,7 +160,7 @@ private:
         if(want_to_check and !FindEdge(Id_1,Id_2))
             return false;
         else{
-            Edge* Edge_to_remove=FindedEdge(Id_1, Id_2);
+            Edge* Edge_to_remove=FindedEdge(Id_1,Id_2);
             long i=0;
 
             while(i<Self[Id_1]->getLista().size() and Self[Id_1]->getLista()[i]!=Edge_to_remove)
@@ -220,7 +219,14 @@ private:
         return new Graph (Map_for_graph,true);
     }
 
-    Graph(){IsDirected=false;}
+public:
+    explicit Graph( map<string,Vertex<Node_type>*> self, bool IsDirected) : Self(self),IsDirected(IsDirected) {}
+    explicit Graph(bool IsDirected): IsDirected(IsDirected){}
+
+
+    map<string, Vertex<Node_type>*>&getSelf() {
+        return Self;
+    }
 
     double Distance(string A, string B){
         if (A == B) return 0;
@@ -228,21 +234,6 @@ private:
             if (e->getIdEnd() == B) return e->getWeight();
         }
         return INT32_MAX;
-    }
-
-
-    bool getIsDirected(){
-        return IsDirected;
-    }
-
-public:
-    explicit Graph(map<string,Vertex<Node_type>*> self, bool IsDirected) : Self(self), IsDirected(IsDirected) {
-    }
-
-    explicit Graph(bool IsDirected):IsDirected(IsDirected){}
-
-    map<string, Vertex<Node_type>*>&getSelf() {
-        return Self;
     }
 
     void AddVertex(const string& ID,Node_type Nodo){
@@ -255,7 +246,7 @@ public:
             cout<<"No se pudo insertar la arista, revise los vértices\n";
         }
         else{
-            auto arista=new Edge(ID_1, ID_2, weight);
+            auto arista=new Edge(ID_1,ID_2,weight);
             getSelf()[ID_1]->Lista_de_adyacencia.push_back(arista);
             if(!IsDirected)
                 getSelf()[ID_2]->Lista_de_adyacencia.push_back(arista);
@@ -286,12 +277,10 @@ public:
     vector<Edge*> Prim(const string& verticeArbitrario){
         return AlgorithmPrim(verticeArbitrario);
     }
-
     vector<Edge*> Prim(){
         auto it = Self.begin();
         return AlgorithmPrim((*it).first);
     }
-
     vector<Edge*> Kruskal(){
         //throw runtime_error("Kruskal no puede ser aplicado en grafos dirigidos");
         vector<Edge*> resultEdges;
@@ -327,27 +316,25 @@ public:
         }
         return resultEdges;
     }
-    
+
     void PrintKruskal(){
         auto resultEdges = Kruskal();
         for(auto& item: resultEdges){
-            PrintEdge(item->getParId());
+            PrintEdge(item->getPair());
         }
         cout<<endl;
     }
-
     void PrintPrim(string verticeArbitrario){
         auto resultEdges = Prim(verticeArbitrario);
         for (auto & item : resultEdges) {
-            PrintEdge(item->getParId());
+            PrintEdge(item->getPair());
         }
         cout<<endl;
     }
-
     void PrintPrim(){
         auto resultEdges = Prim();
         for (auto & item : resultEdges) {
-            PrintEdge(item->getParId());
+            PrintEdge(item->getPair());
         }
         cout<<endl;
     }
@@ -429,7 +416,7 @@ public:
         }
     }
 
-    bool IsStronglyConnected() {
+    bool IsStrongConnected() {
         bool connected = this->IsConnected();
 
         if (IsDirected && connected) {
@@ -473,28 +460,174 @@ public:
         return true;
     }
 
-    unsigned int GetNumberOfEdges(){
+    unsigned int GetNumberOfEdgesGraph(){
         unsigned int num=0;
         for(auto i : Self){
-            num+=i.second->Lista_de_adyacencia.size();
+            num+=i.second->GetNumberOfEdgesVertex();
         }
         if(!IsDirected) num/=2;
+
         return num;
     }
 
-    unsigned int GetNumberOfNodes(){
+    bool GetIsDirected(){
+        return IsDirected;
+    }
+
+    unsigned long long int getNumVertex(){
         return Self.size();
     }
 
+    void addQueueDijkstra(vector<my_pair>& qp, string IDbegin, string IDend, double weight, double dist){
+        for ( auto& item : qp) {
+            if(IDend == item.first.getIdEnd()){
+                item.first = Edge(IDbegin,IDend,weight);
+                item.second = dist;
+                return;
+            }
+        }
+        qp.emplace_back(Edge(IDbegin,IDend,weight),dist);
+    }
+
+    string nextVertex(Graph<Node_type>& grafo, Edge& e){
+        if(!grafo.FindVertex(e.getIdBegin())) return e.getIdBegin();
+        return e.getIdEnd();
+    }
+
+    Graph Dijkstra(string startVertex){
+        Graph<Node_type> arbolMinimosRecorridos(this->GetIsDirected());
+
+        if(!IsConnected()) cout <<"No es posible aplicarlo en grafos no conexos"<<endl;
+
+        else {
+            arbolMinimosRecorridos.AddVertex(startVertex,*(Self[startVertex]->getSelf()));
+            auto cmpPair =[](const my_pair& A,const my_pair& B){ return A.second < B.second; };
+
+            string IDvertex;
+            string IDvertexAdy;
+
+            vector<my_pair> queuePriority;
+            map<string, bool> verticesVisitados;
+            map<string, double> verticesDistancias;
+
+            for (auto it = Self.cbegin(); it != Self.cend(); ++it) {
+                verticesDistancias.emplace(it->first, DBL_MAX);
+                verticesVisitados.emplace(it->first,false);
+            }
+            verticesDistancias[startVertex] = 0;
+
+            IDvertex = startVertex;
+
+            while(arbolMinimosRecorridos.getNumVertex() != this->getNumVertex()){
+
+                verticesVisitados[IDvertex] = true;
+                auto listaAdy = Self[IDvertex]->getLista();
+
+                for(int i = 0; i < listaAdy.size(); ++i){
+                    IDvertexAdy = listaAdy[i]->vertexAdy(IDvertex);
+
+                    if(!verticesVisitados[IDvertexAdy]){
+                        if (verticesDistancias[IDvertexAdy] > verticesDistancias[IDvertex] + listaAdy[i]->getWeight()){
+                            verticesDistancias[IDvertexAdy] = verticesDistancias[IDvertex] + listaAdy[i]->getWeight();
+                            addQueueDijkstra(queuePriority,IDvertex, IDvertexAdy, listaAdy[i]->getWeight(),verticesDistancias[IDvertexAdy]);
+                        }
+                    }
+                }
+                sort(queuePriority.begin(),queuePriority.end(),cmpPair);
+
+                IDvertex = nextVertex(arbolMinimosRecorridos,queuePriority.begin()->first);
+
+                arbolMinimosRecorridos.AddVertex(IDvertex,*(Self[IDvertex]->getSelf()));
+                arbolMinimosRecorridos.AddEdge(queuePriority.begin()->first.getIdBegin(),queuePriority.begin()->first.getIdEnd(),queuePriority.begin()->first.getWeight());
+                PrintEdge(queuePriority.begin()->first.getPair()); //OPCIONAL
+
+                queuePriority.erase(queuePriority.begin());
+            }
+        }
+        return arbolMinimosRecorridos;
+    }
+
+    Graph Astar(string startVertex, string endVertex){
+        Graph<Node_type> ArbolMinimoRecorrido(this->GetIsDirected());
+        ArbolMinimoRecorrido.AddVertex(startVertex,*(Self[startVertex]->getSelf()));
+
+        double total_dist;
+        double distance;
+
+        string IDvertex;
+        string IDvertexAdy;
+
+        auto cmpPair =[](const pair<double,string>& A,const pair<double,string>& B){ return A.first < B.first; };
+
+        map<string, bool> visited;
+        map<string, string> parent;
+        vector<pair<double,string>> distAcum;
+
+        map<string, double> dist;
+        for (auto it = Self.cbegin(); it != Self.cend(); ++it){
+            dist.emplace(it->first,DBL_MAX);
+            visited.emplace(it->first,false);
+        }
+        dist[startVertex] = 0;
+        parent[startVertex] = startVertex;
+        distAcum.emplace_back(0,startVertex);
+
+        while(!distAcum.empty()){
+            IDvertex = distAcum.begin()->second;
+            visited[IDvertex] = true;
+            distAcum.erase(distAcum.begin());
+
+            if(IDvertex == endVertex) break;
+
+            auto listaAdy = Self[IDvertex]->getLista();
+
+            for (int i = 0; i < listaAdy.size(); ++i) {
+                IDvertexAdy = listaAdy[i]->vertexAdy(IDvertex);
+                if(!visited[IDvertexAdy]){
+                    distance = dist[IDvertex] + listaAdy[i]->getWeight();
+
+                    if(dist[IDvertexAdy] > distance){
+                        dist[IDvertexAdy] = distance;
+                        parent[IDvertexAdy] = IDvertex;
+
+                        total_dist = distance + Node_type::Calculate_weight(*Self[IDvertexAdy]->self,*Self[endVertex]->self);
+                        distAcum.emplace_back(total_dist,IDvertexAdy);
+                    }
+
+                }
+            }
+            sort(distAcum.begin(),distAcum.end(),cmpPair);
+        }
+
+        if(parent.find(endVertex) != parent.end()){
+            string ID = endVertex;
+            ArbolMinimoRecorrido.AddVertex(ID,*Self[ID]->self);
+
+            vector<string> vertices;
+            vertices.insert(vertices.begin(),ID);
+
+            while(ID != parent[ID]){
+                ArbolMinimoRecorrido.AddVertex(ID,*Self[ID]->self);
+                vertices.insert(vertices.begin(),parent[ID]);
+
+                ID = parent[ID];
+            }
+
+            for (int i = 0; i < vertices.size() - 1; ++i) {
+                auto edge = FindedEdge(vertices[i],vertices[i+1]);
+                ArbolMinimoRecorrido.AddEdge(vertices[i],vertices[i+1],edge->getWeight());
+                PrintEdge(edge->getPair()); //OPCIONAL
+            }
+
+        }else{
+            cout<<"No se encontro camino"<<endl;
+        }
+        return ArbolMinimoRecorrido;
+    }
     ~Graph(){
         ClearEdges();
         ClearVertexes();
     }
-
-
-
-    ///ALGORITMOS DE LA SEGUNDA ENTREGA
-
 
     vector<Vertex<Node_type>*> GetNodes(){
         vector<Vertex<Node_type>*> MyNodes;
@@ -594,7 +727,7 @@ public:
 
 
 
-    
+
     vector<vector<double>> FloydWarshall() {
         if (!IsDirected)
             throw std::invalid_argument("El algoritmo solo puede ser aplicado en grafos dirigidos");
@@ -677,14 +810,6 @@ public:
             cout << v.first << "\t\t" << dist[v.first] << endl;
     }
 
-
-
-
-
-
-
-
 };
-
 
 #endif //GRAPHS_GETGROUP_GETNAME_Graph_H

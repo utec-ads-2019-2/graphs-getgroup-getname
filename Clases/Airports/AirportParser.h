@@ -35,7 +35,7 @@ public:
             }
 
             auto airport1=new Airport(City,Name,Country,Longitude,Latitude,Id);
-            auto vertice1=new Vertex<Airport> (airport1, aristas);
+            auto vertice1=new Vertex<Airport> (airport1,aristas);
             Map_for_graph[to_string(vertice1->getSelf()->getId())]=vertice1;
         }
 

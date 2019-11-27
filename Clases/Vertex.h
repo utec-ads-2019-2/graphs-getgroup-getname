@@ -1,11 +1,10 @@
-#ifndef GRAPHS_GETGROUP_GETNAME_VERTEX_H
-#define GRAPHS_GETGROUP_GETNAME_VERTEX_H
+#ifndef GRAPHS_GETGROUP_GETNAME_VERTICE_H
+#define GRAPHS_GETGROUP_GETNAME_VERTICE_H
 #include <utility>
 #include <vector>
 #include "Edge.h"
 using namespace std;
 template<typename Node_type>
-
 class Vertex {
 public:
     Node_type* self;
@@ -18,8 +17,11 @@ public:
         return Lista_de_adyacencia;
     }
 
+    unsigned long long int GetNumberOfEdgesVertex(){
+        return Lista_de_adyacencia.size();
+    }
 
-    explicit Vertex(Node_type *self, vector<Edge*> Adyacencia) : self(self), Lista_de_adyacencia(std::move(Adyacencia)) {}
+    explicit Vertex(Node_type *self,vector<Edge*> Adyacencia) : self(self),Lista_de_adyacencia(std::move(Adyacencia)) {}
     explicit Vertex(Node_type *self) : self(self){}
     explicit Vertex(Node_type yy)  {
        self =new Node_type(yy);
@@ -34,4 +36,4 @@ public:
 };
 
 
-#endif //GRAPHS_GETGROUP_GETNAME_VERTEX_H
+#endif //GRAPHS_GETGROUP_GETNAME_VERTICE_H

@@ -3,8 +3,10 @@
 #ifndef GRAPHS_GETGROUP_GETNAME_ARISTA_DIRIGIDA_H
 #define GRAPHS_GETGROUP_GETNAME_ARISTA_DIRIGIDA_H
 using namespace std;
+
 class Edge{
-    string Id_begin,Id_End;
+    string Id_begin;
+    string Id_End;
     double weight;
 public:
     Edge(string idBegin, string idEnd) : Id_begin(std::move(idBegin)), Id_End(std::move(idEnd)), weight(0) {}
@@ -14,15 +16,20 @@ public:
         return toCompare.getParId() == getParId();
     }
 
-    string getIdBegin() const {
-        return Id_begin;
-    }
-
     string getOtherId(string& ToCompare)const {
         if(ToCompare==Id_begin)
             return Id_End;
         else
             return Id_begin;
+    }
+
+    string vertexAdy(string vertex){
+        if(vertex == Id_begin) return Id_End;
+        return Id_begin;
+    }
+
+    string getIdBegin() const {
+        return Id_begin;
     }
 
     void setIdBegin(string idBegin) {

@@ -16,8 +16,6 @@ public:
     static double Calculate_weight(const String_class& id1,const String_class& id2){
         return double();
     }
-
-
     ~String_class()= default;
 
 };

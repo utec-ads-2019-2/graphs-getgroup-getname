@@ -27,13 +27,14 @@ public:
         Value& aristas= d["Aristas"];
         for (size_t i=0; i<aristas.Size(); i++) {
             auto vertice1=aristas[i][0].GetString();auto vertice2=aristas[i][1].GetString();
-            auto arista=new Edge(vertice1, vertice2, aristas[i][2].GetInt());
+            auto arista=new Edge(vertice1,vertice2,aristas[i][2].GetInt());
             Graph1.getSelf()[vertice1]->Lista_de_adyacencia.push_back(arista);
             Graph1.getSelf()[vertice2]->Lista_de_adyacencia.push_back(arista);
         }
 
         return Graph1;
     }
+
     ~Basic_Parser()= default;
 };
 

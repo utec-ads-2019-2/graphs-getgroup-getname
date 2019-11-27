@@ -5,17 +5,14 @@
 #include "Vertice.h"
 #include <set>
 #include <algorithm>
+//#include "Algorithm_Astart.h"
 #include "Arista.h"
 #include "DisjoinSet.h"
 #include <cfloat>
-#include <algorithm>
 using namespace std;
-
-
 
 template<typename Node_type>
 class Graph{
-
 private:
 
     typedef pair<Arista,double> my_pair;
@@ -24,11 +21,8 @@ private:
 
     bool IsDirected;
 
-    void PrintEdge(const set<string>& parID){
-        auto Itr = parID.begin();
-        cout<<"{ "<<(*Itr)<<" , ";
-        ++Itr;
-        cout<<(*Itr)<<" } ";
+    void PrintEdge(const pair<string,string>& parID){
+        cout<<"{ "<<parID.first<<" , "<<parID.second<<" } ";
     }
 
     bool SetEmpty(vector<string>* setUnitario){
@@ -93,7 +87,7 @@ private:
                     }
 
                     do {
-                        verticesEgde = (*aristasPosibles.begin()).second->getParId();
+                        verticesEgde = (*aristasPosibles.begin()).second->getPair();
 
                         set_difference(verticesEgde.begin(), verticesEgde.end(), verticesInMST.begin(),
                                        verticesInMST.end(), setUnitario->begin());
@@ -311,29 +305,28 @@ public:
         }
         return resultEdges;
     }
-    
+
     void PrintKruskal(){
         auto resultEdges = Kruskal();
         for(auto& item: resultEdges){
-            PrintEdge(item->getParId());
+            PrintEdge(item->getPair());
         }
         cout<<endl;
     }
     void PrintPrim(string verticeArbitrario){
         auto resultEdges = Prim(verticeArbitrario);
         for (auto & item : resultEdges) {
-            PrintEdge(item->getParId());
+            PrintEdge(item->getPair());
         }
         cout<<endl;
     }
     void PrintPrim(){
         auto resultEdges = Prim();
         for (auto & item : resultEdges) {
-            PrintEdge(item->getParId());
+            PrintEdge(item->getPair());
         }
         cout<<endl;
     }
-
 
     float GetDensity(){
         int numero_de_vertices=Self.size();
@@ -466,7 +459,7 @@ public:
         return num;
     }
 
-    bool getIsDirected(){
+    bool GetIsDirected(){
         return IsDirected;
     }
 
@@ -474,7 +467,7 @@ public:
         return Self.size();
     }
 
-    void addQueuePriority(vector<my_pair>& qp, string IDbegin, string IDend, double weight, double dist){
+    void addQueueDijkstra(vector<my_pair>& qp, string IDbegin, string IDend, double weight, double dist){
         for ( auto& item : qp) {
             if(IDend == item.first.getIdEnd()){
                 item.first = Arista(IDbegin,IDend,weight);
@@ -491,7 +484,7 @@ public:
     }
 
     Graph Dijkstra(string startVertex){
-        Graph<Node_type> arbolMinimosRecorridos(this->getIsDirected());
+        Graph<Node_type> arbolMinimosRecorridos(this->GetIsDirected());
 
         if(!IsConnected()) cout <<"No es posible aplicarlo en grafos no conexos"<<endl;
 
@@ -525,7 +518,7 @@ public:
                     if(!verticesVisitados[IDvertexAdy]){
                         if (verticesDistancias[IDvertexAdy] > verticesDistancias[IDvertex] + listaAdy[i]->getWeight()){
                             verticesDistancias[IDvertexAdy] = verticesDistancias[IDvertex] + listaAdy[i]->getWeight();
-                            addQueuePriority(queuePriority,IDvertex, IDvertexAdy, listaAdy[i]->getWeight(),verticesDistancias[IDvertexAdy]);
+                            addQueueDijkstra(queuePriority,IDvertex, IDvertexAdy, listaAdy[i]->getWeight(),verticesDistancias[IDvertexAdy]);
                         }
                     }
                 }
@@ -535,7 +528,7 @@ public:
 
                 arbolMinimosRecorridos.AddVertex(IDvertex,*(Self[IDvertex]->getSelf()));
                 arbolMinimosRecorridos.AddEdge(queuePriority.begin()->first.getIdBegin(),queuePriority.begin()->first.getIdEnd(),queuePriority.begin()->first.getWeight());
-                PrintEdge(queuePriority.begin()->first.getParId()); //OPCIONAL
+                PrintEdge(queuePriority.begin()->first.getPair()); //OPCIONAL
 
                 queuePriority.erase(queuePriority.begin());
             }
@@ -543,8 +536,82 @@ public:
         return arbolMinimosRecorridos;
     }
 
-    Graph Astar(){
+    Graph Astar(string startVertex, string endVertex){
+        Graph<Node_type> ArbolMinimoRecorrido(this->GetIsDirected());
+        ArbolMinimoRecorrido.AddVertex(startVertex,*(Self[startVertex]->getSelf()));
 
+        double total_dist;
+        double distance;
+
+        string IDvertex;
+        string IDvertexAdy;
+
+        auto cmpPair =[](const pair<double,string>& A,const pair<double,string>& B){ return A.first < B.first; };
+
+        map<string, bool> visited;
+        map<string, string> parent;
+        vector<pair<double,string>> distAcum;
+
+        map<string, double> dist;
+        for (auto it = Self.cbegin(); it != Self.cend(); ++it){
+            dist.emplace(it->first,DBL_MAX);
+            visited.emplace(it->first,false);
+        }
+        dist[startVertex] = 0;
+        parent[startVertex] = startVertex;
+        distAcum.emplace_back(0,startVertex);
+
+        while(!distAcum.empty()){
+            IDvertex = distAcum.begin()->second;
+            visited[IDvertex] = true;
+            distAcum.erase(distAcum.begin());
+
+            if(IDvertex == endVertex) break;
+
+            auto listaAdy = Self[IDvertex]->getLista();
+
+            for (int i = 0; i < listaAdy.size(); ++i) {
+                IDvertexAdy = listaAdy[i]->vertexAdy(IDvertex);
+                if(!visited[IDvertexAdy]){
+                    distance = dist[IDvertex] + listaAdy[i]->getWeight();
+
+                    if(dist[IDvertexAdy] > distance){
+                        dist[IDvertexAdy] = distance;
+                        parent[IDvertexAdy] = IDvertex;
+
+                        total_dist = distance + Node_type::Calculate_weight(*Self[IDvertexAdy]->self,*Self[endVertex]->self);
+                        distAcum.emplace_back(total_dist,IDvertexAdy);
+                    }
+
+                }
+            }
+            sort(distAcum.begin(),distAcum.end(),cmpPair);
+        }
+
+        if(parent.find(endVertex) != parent.end()){
+            string ID = endVertex;
+            ArbolMinimoRecorrido.AddVertex(ID,*Self[ID]->self);
+
+            vector<string> vertices;
+            vertices.insert(vertices.begin(),ID);
+
+            while(ID != parent[ID]){
+                ArbolMinimoRecorrido.AddVertex(ID,*Self[ID]->self);
+                vertices.insert(vertices.begin(),parent[ID]);
+
+                ID = parent[ID];
+            }
+
+            for (int i = 0; i < vertices.size() - 1; ++i) {
+                auto edge = FindedEdge(vertices[i],vertices[i+1]);
+                ArbolMinimoRecorrido.AddEdge(vertices[i],vertices[i+1],edge->getWeight());
+                PrintEdge(edge->getPair()); //OPCIONAL
+            }
+
+        }else{
+            cout<<"No se encontro camino"<<endl;
+        }
+        return ArbolMinimoRecorrido;
     }
     ~Graph(){
         ClearEdges();

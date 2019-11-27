@@ -1,8 +1,10 @@
 #include <iostream>
 #include "Clases/Grafo.h"
+//#include "Clases/Algorithm_Astart.h"
 #include "Clases/Airports/AirportParser.h"
 #include "Clases/Tester_class/Basic_Parser.h"
-
+#include "Clases/Tester_class/Heuristic_Parser.h"
+/*
 #ifndef NDEBUG
 #   define ASSERT(condition, message) \
     do { \
@@ -257,12 +259,25 @@ void TestKruskal(){
     delete Grafo_dirigido;
 }
 
-
+*/
 int main() {
 
     ///TEST DE TODOS LOS METODOS EN GRAFOS DIRIGIDOS Y NO DIRIGIDOS
+    /*Basic_Parser Parser_2("../json_files/tester_Dijkstra.json");
+    auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
+    Grafo__no_dirigido->Dijkstra("A");
+    */
 
+    Heuristic_Parser nuevoGrafo1("../json_files/tester1_A.json");
+    auto grafoHeuristic1 = new Graph<Heuristic_class>(nuevoGrafo1.Generate_Graph());
+    grafoHeuristic1->Astar("A","G");
+    cout<<endl;
 
+    Heuristic_Parser nuevoGrafo2("../json_files/tester2_A.json");
+    auto grafoHeuristic2 = new Graph<Heuristic_class>(nuevoGrafo2.Generate_Graph());
+    grafoHeuristic2->Astar("A","D");
+
+/*
     TestConstructorAndLoadFromFile();
 
     TestFindEdgeAndFindVertex();
@@ -282,7 +297,7 @@ int main() {
     TestPrim();
 
     TestKruskal();
-    
+  */
     return EXIT_SUCCESS;
 
 }

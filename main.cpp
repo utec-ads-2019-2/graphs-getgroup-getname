@@ -16,16 +16,6 @@
 #endif
 
 
-void TestConstructorAndLoadFromFile(){
-    AirportParser Parser_1("../json_files/airports.json");
-    Basic_Parser Parser_2("../json_files/tester.json");
-    auto Grafo_dirigido=new Graph<Airport>(Parser_1.Generate_Graph());
-    auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
-    ASSERT(Grafo_dirigido!= nullptr,"Constructor con errores");
-    ASSERT(Grafo__no_dirigido!= nullptr,"Constructor con errores");
-    delete Grafo__no_dirigido;
-    delete Grafo_dirigido;
-}
 
 void TestPrim(){
     AirportParser Parser_1("../json_files/airports_mini.json");
@@ -89,7 +79,12 @@ void TestKruskal(){
     delete Grafo_dirigido;
 }
 
-void TestDFS(){
+void TestDFS(){    AirportParser Parser_1("../json_files/airports_connected.json");
+    Basic_Parser Parser_2("../json_files/tester.json");
+    auto Grafo_dirigido=new Graph<Airport>(Parser_1.Generate_Graph());
+    auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
+    Grafo_dirigido->DFS("6");
+    Grafo__no_dirigido->DFS("J");
 
 }
 void TestBFS(){

@@ -532,7 +532,6 @@ public:
         }
         return toBuild;
     }
-
     vector<Edge*> BFS(){
         auto it = Self.begin();
         return BFS((*it).first);
@@ -542,7 +541,6 @@ public:
         for(auto item:BFS(Id))
             cout<<item->getIdBegin()<<"  "<<item->getIdEnd()<<endl;
     }
-
     void printBFS(){
         for(auto item:BFS())
             cout<<item->getIdBegin()<<"  "<<item->getIdEnd()<<endl;
@@ -556,15 +554,47 @@ public:
         if(IsDirected and Self[RootID]->getLista().size()==0)
             throw out_of_range("Elige un Root valido");
 
-        map<string,bool> visited;
+        map<string,bool> CheckList;
         for (auto v : Self)
-            visited[v.first] = false;
+            CheckList[v.first] = false;
 
-        DFSUtil(visited.begin()->first,visited);
+        vector<Edge*> toBuild; stack<string> Process; Process.push(RootID);
 
+        while(!Process.empty()){
+            string temp = Process.top();
+            CheckList[temp] = true;
+            int contador=0;
+            for(auto iterator:Self[temp]->getLista()){
+                string other=iterator->getOtherId(temp);
+                if(!CheckList[other]){
+                    Process.push(other);
+                    toBuild.push_back(iterator);
+                    contador++;
+                    break;
+                }
+            }
+            if(contador==0)
+                Process.pop();
+        }
+        return toBuild;
+    }
+    vector<Edge*> DFS(){
+        auto it = Self.begin();
+        return DFS((*it).first); }
 
+    void printDFS(string Id){
+        for(auto item:DFS(Id))
+            cout<<item->getIdBegin()<<"  "<<item->getIdEnd()<<endl;
+    }
+    void printDFS(){
+        for(auto item:DFS())
+            cout<<item->getIdBegin()<<"  "<<item->getIdEnd()<<endl;
     }
 
+
+
+
+    
     vector<vector<double>> FloydWarshall() {
         if (!IsDirected)
             throw std::invalid_argument("El algoritmo solo puede ser aplicado en grafos dirigidos");

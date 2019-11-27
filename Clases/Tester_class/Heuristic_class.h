@@ -1,6 +1,8 @@
 #ifndef PROYECT_1_HEURISTIC_CLASS_H
 #define PROYECT_1_HEURISTIC_CLASS_H
 
+#include <cmath>
+
 class Heuristic_class{
 private:
     string Name;

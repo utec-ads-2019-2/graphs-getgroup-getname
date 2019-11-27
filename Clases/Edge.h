@@ -4,16 +4,23 @@
 #define GRAPHS_GETGROUP_GETNAME_ARISTA_DIRIGIDA_H
 using namespace std;
 
-class Arista{
+class Edge{
     string Id_begin;
     string Id_End;
     double weight;
 public:
-    Arista(string idBegin, string idEnd) : Id_begin(std::move(idBegin)), Id_End(std::move(idEnd)), weight(0) {}
-    Arista(string idBegin, string idEnd, double weight) : Id_begin(std::move(idBegin)), Id_End(std::move(idEnd)), weight(weight) {}
+    Edge(string idBegin, string idEnd) : Id_begin(std::move(idBegin)), Id_End(std::move(idEnd)), weight(0) {}
+    Edge(string idBegin, string idEnd, double weight) : Id_begin(std::move(idBegin)), Id_End(std::move(idEnd)), weight(weight) {}
 
-    bool operator ==(Arista toCompare){
+    bool operator ==(Edge toCompare){
         return toCompare.getParId() == getParId();
+    }
+
+    string getOtherId(string& ToCompare)const {
+        if(ToCompare==Id_begin)
+            return Id_End;
+        else
+            return Id_begin;
     }
 
     string vertexAdy(string vertex){
@@ -60,7 +67,7 @@ public:
         weight = d;
     }
 
-    ~Arista()= default;
+    ~Edge()= default;
 };
 
 

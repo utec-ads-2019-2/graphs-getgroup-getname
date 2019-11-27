@@ -10,7 +10,7 @@ public:
 
     Graph<Heuristic_class> Generate_Graph(){
 
-        map<string,Vertice<Heuristic_class>*> Map_for_graph;
+        map<string,Vertex<Heuristic_class>*> Map_for_graph;
 
         ifstream ifs(archivo); IStreamWrapper isw(ifs); Document d; d.ParseStream(isw);
 
@@ -20,7 +20,7 @@ public:
             auto heuristic1=new Heuristic_class(vertices[i].GetObject()["ID"].GetString(),
                     vertices[i]["posX"].GetInt(),vertices[i]["posY"].GetInt());
 
-            auto vertice1= new Vertice<Heuristic_class> (heuristic1);
+            auto vertice1= new Vertex<Heuristic_class> (heuristic1);
             Map_for_graph[vertice1->getSelf()->getName()] = vertice1;
         }
 
@@ -31,7 +31,7 @@ public:
             auto vertice1=aristas[i][0].GetString();
             auto vertice2=aristas[i][1].GetString();
 
-            auto arista=new Arista(vertice1,vertice2);
+            auto arista=new Edge(vertice1,vertice2);
             arista->setWeight(Heuristic_class::Calculate_weight(*Map_for_graph[vertice1]->self,*Map_for_graph[vertice2]->self));
 
             Graph1.getSelf()[vertice1]->Lista_de_adyacencia.push_back(arista);

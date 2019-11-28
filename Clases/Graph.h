@@ -845,7 +845,7 @@ public:
                 v = edge->getIdEnd();
                 if(dist[v] > dist[u] + edge->getWeight()){
                     dist[v] = dist[u] + edge->getWeight();
-                    if (en_cola[v] == false){
+                    if (!en_cola[v]){
                         qp.push(v);
                         en_cola[v] = true;
                     }

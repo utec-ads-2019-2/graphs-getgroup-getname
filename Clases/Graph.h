@@ -11,6 +11,8 @@
 #include <cfloat>
 #include <stack>
 #include <queue>
+
+#define MAX 2.14748e+09
 using namespace std;
 
 template<typename Node_type>
@@ -672,11 +674,14 @@ public:
 
     void printBFS(string Id){
         for(auto item:BFS(Id))
-            cout<<item->getIdBegin()<<"  "<<item->getIdEnd()<<endl;
+            PrintEdge(item->getPair());
+        cout<<endl;
     }
     void printBFS(){
         for(auto item:BFS())
-            cout<<item->getIdBegin()<<"  "<<item->getIdEnd()<<endl;
+            PrintEdge(item->getPair());
+        cout<<endl;
+
     }
 
     vector<Edge*> DFS(const string& RootID){
@@ -717,14 +722,15 @@ public:
 
     void printDFS(string Id){
         for(auto item:DFS(Id))
-            cout<<item->getIdBegin()<<"  "<<item->getIdEnd()<<endl;
+            PrintEdge(item->getPair());
+        cout<<endl;
     }
     void printDFS(){
         for(auto item:DFS())
-            cout<<item->getIdBegin()<<"  "<<item->getIdEnd()<<endl;
+            PrintEdge(item->getPair());
+        cout<<endl;
+
     }
-
-
 
 
 
@@ -768,7 +774,7 @@ public:
         for (int i = 0; i < n; ++i) {
             cout << "(" << keys[i] << ")\t";
             for (int j = 0; j < n; ++j) {
-                if (FWmtx[i][j] == INT32_MAX) cout << "INF\t";
+                if (FWmtx[i][j] >= INT32_MAX or FWmtx[i][j]>= MAX) cout << "INF\t";
                 else cout << FWmtx[i][j] << "\t";
             } cout << endl;
         }

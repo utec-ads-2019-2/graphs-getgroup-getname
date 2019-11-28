@@ -817,6 +817,59 @@ public:
         for (auto v : Self)
             cout << v.first << "\t\t" << dist[v.first] << endl;
     }
+
+    unordered_map <string,double> BellmanFord_Optimized(const string& origen) {
+        if (!IsDirected)
+            throw std::invalid_argument("El algoritmo solo puede ser aplicado en grafos dirigidos");
+
+        string u;
+        string v;
+
+        unordered_map<string, double> dist;
+        unordered_map<string, bool> en_cola;
+
+        queue<string> qp;
+        for (auto v : Self) {
+            dist[v.first] = INT32_MAX;
+            en_cola[v.first] = false;
+        }
+        dist[origen] = 0;
+        qp.push(origen);
+        en_cola[origen] = true;
+
+        while(!qp.empty()){
+            u = qp.front();
+            qp.pop();
+            en_cola[u] = false;
+            for(auto edge : Self[u]->Lista_de_adyacencia) {
+                v = edge->getIdEnd();
+                if(dist[v] > dist[u] + edge->getWeight()){
+                    dist[v] = dist[u] + edge->getWeight();
+                    if (en_cola[v] == false){
+                        qp.push(v);
+                        en_cola[v] = true;
+                    }
+                }
+            }
+        }
+
+        return dist;
+    }
+
+
+    void PrintBellmanFord_Optimized(const string& origen) {
+        auto dist = this->BellmanFord_Optimized(origen);
+        cout << "Vertex\t Distance from Source\n";
+        for (auto v : Self){
+            if(dist[v.first]!=MAX)
+                cout << v.first << "\t\t" << dist[v.first] << endl;
+            else
+                cout << v.first << "\t\t" << "INF" << endl;
+        }
+    }
+
+
+
 };
 
 #endif //GRAPHS_GETGROUP_GETNAME_Graph_H

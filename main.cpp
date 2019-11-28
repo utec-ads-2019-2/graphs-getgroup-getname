@@ -42,7 +42,7 @@ void TestBFS(){
 void TestBellmanFord(){
     AirportParser Parser_2("../json_files/airports.json");
     auto Grafo_dirigido=new Graph<Airport>(Parser_2.Generate_Graph());
-    Grafo_dirigido->PrintBellmanFord("1818");
+    Grafo_dirigido->PrintBellmanFord_Optimized("1818");
 }
 
 void TestFloydWarshall(){
@@ -56,6 +56,12 @@ void TestDijkstra(){
     auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
     Grafo__no_dirigido->Dijkstra("A");
     cout<<endl;
+
+    AirportParser nuevoGrafo2("../json_files/airports.json");
+    auto grafoHeuristic2 = new Graph<Airport>(nuevoGrafo2.Generate_Graph());
+    grafoHeuristic2->Dijkstra("7252");
+    cout<<endl;
+
 }
 
 void TestAStar(){
@@ -64,9 +70,9 @@ void TestAStar(){
     grafoHeuristic1->Astar("A","G");
     cout<<endl;
 
-    Heuristic_Parser nuevoGrafo2("../json_files/tester2_A.json");
-    auto grafoHeuristic2 = new Graph<Heuristic_class>(nuevoGrafo2.Generate_Graph());
-    grafoHeuristic2->Astar("A","D");
+    AirportParser nuevoGrafo2("../json_files/airports.json");
+    auto grafoHeuristic2 = new Graph<Airport>(nuevoGrafo2.Generate_Graph());
+    grafoHeuristic2->Astar("7252","4020");
     cout<<endl;
 }
 

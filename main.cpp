@@ -40,9 +40,9 @@ void TestBFS(){
 }
 
 void TestBellmanFord(){
-    Basic_Parser_D Parser_2("../json_files/FW.json");
-    auto Grafo_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
-    Grafo_dirigido->PrintBellmanFord("S");
+    AirportParser Parser_2("../json_files/airports.json");
+    auto Grafo_dirigido=new Graph<Airport>(Parser_2.Generate_Graph());
+    Grafo_dirigido->PrintBellmanFord("1818");
 }
 
 void TestFloydWarshall(){

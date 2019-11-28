@@ -11,6 +11,7 @@
 #include <cfloat>
 #include <stack>
 #include <queue>
+#include <unordered_map>
 
 #define MAX 2.14748e+09
 using namespace std;
@@ -534,6 +535,7 @@ public:
                             addQueueDijkstra(queuePriority,IDvertex, IDvertexAdy, listaAdy[i]->getWeight(),verticesDistancias[IDvertexAdy]);
                         }
                     }
+
                 }
                 sort(queuePriority.begin(),queuePriority.end(),cmpPair);
 
@@ -733,8 +735,7 @@ public:
     }
 
 
-
-    vector<vector<double>> FloydWarshall() {
+    vector<vector<double>> FloydWarshall(){
         if (!IsDirected)
             throw std::invalid_argument("El algoritmo solo puede ser aplicado en grafos dirigidos");
 
@@ -780,14 +781,16 @@ public:
         }
     }
 
-    map <string,double> BellmanFord(const string& origen) {
+    unordered_map <string,double> BellmanFord(const string& origen) {
         if (!IsDirected)
             throw std::invalid_argument("El algoritmo solo puede ser aplicado en grafos dirigidos");
 
-        map <string,double> dist;
+        unordered_map <string,double> dist;
         for (auto v : Self)
             dist[v.first] = INT32_MAX;
-        dist.at(origen) = 0;
+        dist[origen] = 0;
+
+
 
         for (int i = 0; i < Self.size()-1; ++i)
             for (auto s : Self)
@@ -805,7 +808,6 @@ public:
                 if (dist[u] != INT32_MAX && dist[u] + w < dist[v])
                     throw std::invalid_argument("El grafo contiene un ciclo de peso negativo");
             }
-
         return dist;
     }
 
@@ -815,7 +817,6 @@ public:
         for (auto v : Self)
             cout << v.first << "\t\t" << dist[v.first] << endl;
     }
-
 };
 
 #endif //GRAPHS_GETGROUP_GETNAME_Graph_H

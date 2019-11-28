@@ -86,7 +86,6 @@ int main() {
 
     TestAStar();
 
-    cout<<INT_MAX;
 
     return EXIT_SUCCESS;
 }

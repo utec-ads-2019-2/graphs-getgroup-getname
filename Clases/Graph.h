@@ -497,6 +497,7 @@ public:
         return e.getIdEnd();
     }
 
+/*
     Graph Dijkstra(string startVertex){
         Graph<Node_type> arbolMinimosRecorridos(this->GetIsDirected());
 
@@ -550,6 +551,155 @@ public:
         }
         return arbolMinimosRecorridos;
     }
+*/
+    bool findIDvector(const vector<string>& allEdges, string ID){
+        for (auto & item : allEdges) {
+            if(item == ID) return true;
+        }
+        return false;
+    }
+
+    string nextVertex(vector<string> vertex, Edge& e){
+        if(findIDvector(vertex,e.getIdBegin())) return e.getIdEnd();
+        return e.getIdEnd();
+    }
+
+    Graph DijkstraGraph(string startVertex){
+        Graph<Node_type> arbolMinimosRecorridos(this->GetIsDirected());
+
+        if(!IsConnected()) cout <<"No es posible aplicarlo en grafos no conexos"<<endl;
+
+        else {
+            arbolMinimosRecorridos.AddVertex(startVertex,*(Self[startVertex]->getSelf()));
+            auto cmpPair =[](const my_pair& A,const my_pair& B){ return A.second < B.second; };
+
+            string IDvertex;
+            string IDvertexAdy;
+
+            vector<my_pair> queuePriority;
+            map<string, bool> verticesVisitados;
+            map<string, double> verticesDistancias;
+
+            for (auto it = Self.cbegin(); it != Self.cend(); ++it) {
+                verticesDistancias.emplace(it->first, DBL_MAX);
+                verticesVisitados.emplace(it->first,false);
+            }
+            verticesDistancias[startVertex] = 0;
+
+            IDvertex = startVertex;
+
+            while(arbolMinimosRecorridos.getNumVertex() != this->getNumVertex()){
+
+                verticesVisitados[IDvertex] = true;
+                auto listaAdy = Self[IDvertex]->getLista();
+
+                for(int i = 0; i < listaAdy.size(); ++i){
+                    IDvertexAdy = listaAdy[i]->vertexAdy(IDvertex);
+
+                    if(!verticesVisitados[IDvertexAdy]){
+                        if (verticesDistancias[IDvertexAdy] > verticesDistancias[IDvertex] + listaAdy[i]->getWeight()){
+                            verticesDistancias[IDvertexAdy] = verticesDistancias[IDvertex] + listaAdy[i]->getWeight();
+                            addQueueDijkstra(queuePriority,IDvertex, IDvertexAdy, listaAdy[i]->getWeight(),verticesDistancias[IDvertexAdy]);
+                        }
+                    }
+
+                }
+                sort(queuePriority.begin(),queuePriority.end(),cmpPair);
+
+                IDvertex = nextVertex(arbolMinimosRecorridos,queuePriority.begin()->first);
+
+                arbolMinimosRecorridos.AddVertex(IDvertex,*(Self[IDvertex]->getSelf()));
+                arbolMinimosRecorridos.AddEdge(queuePriority.begin()->first.getIdBegin(),queuePriority.begin()->first.getIdEnd(),queuePriority.begin()->first.getWeight());
+                PrintEdge(queuePriority.begin()->first.getPair()); //OPCIONAL
+
+                queuePriority.erase(queuePriority.begin());
+            }
+        }
+        return arbolMinimosRecorridos;
+    }
+
+    vector<vector<string>> DijkstraPaths(string startVertex){
+        map<string,string> parent;
+
+        if(!IsConnected()) cout <<"No es posible aplicarlo en grafos no conexos"<<endl;
+
+        else {
+            auto cmpPair =[](const my_pair& A,const my_pair& B){ return A.second < B.second; };
+
+            string IDvertex;
+            string IDvertexAdy;
+            vector<string> vertexs;
+            vector<my_pair> queuePriority;
+            map<string, bool> verticesVisitados;
+            map<string, double> verticesDistancias;
+
+            for (auto it = Self.cbegin(); it != Self.cend(); ++it) {
+                verticesDistancias.emplace(it->first, DBL_MAX);
+                verticesVisitados.emplace(it->first,false);
+                //parent[]
+            }
+            verticesDistancias[startVertex] = 0;
+            parent[startVertex] = startVertex;
+            vertexs.push_back(startVertex);
+
+            IDvertex = startVertex;
+
+            while(vertexs.size() != Self.size()){
+
+                verticesVisitados[IDvertex] = true;
+                auto listaAdy = Self[IDvertex]->getLista();
+
+                for(int i = 0; i < listaAdy.size(); ++i){
+                    IDvertexAdy = listaAdy[i]->vertexAdy(IDvertex);
+
+                    if(!verticesVisitados[IDvertexAdy]){
+                        if (verticesDistancias[IDvertexAdy] > verticesDistancias[IDvertex] + listaAdy[i]->getWeight()){
+                            parent[IDvertexAdy] = IDvertex;
+                            verticesDistancias[IDvertexAdy] = verticesDistancias[IDvertex] + listaAdy[i]->getWeight();
+                            addQueueDijkstra(queuePriority,IDvertex, IDvertexAdy, listaAdy[i]->getWeight(),verticesDistancias[IDvertexAdy]);
+                        }
+                    }
+
+                }
+                sort(queuePriority.begin(),queuePriority.end(),cmpPair);
+
+                IDvertex = nextVertex(vertexs,queuePriority.begin()->first);
+                vertexs.insert(vertexs.begin(),IDvertex);
+
+                //PrintEdge(queuePriority.begin()->first.getPair()); //OPCIONAL
+
+                queuePriority.erase(queuePriority.begin());
+            }
+        }
+
+        vector<vector<string>> Paths;
+        string ID;
+        for (auto vertex  = Self.cbegin(); vertex != Self.cend(); vertex++) {
+            ID = vertex->first;
+            vector<string> path; path.push_back(ID);
+            while(startVertex != parent[ID]){
+                path.insert(path.begin()+1,parent[ID]);
+                ID = parent[ID];
+            }
+            Paths.push_back(path);
+        }
+
+        return Paths;
+    }
+
+
+    void PrintDijkstraPaths(string startVertex){
+        auto Paths = DijkstraPaths(startVertex);
+        for (int i = 0; i < Paths.size(); ++i) {
+            cout<<"Camino "<< startVertex<<" "<< Paths[i][0]<<": ";
+            for (int j = 1; j < Paths[i].size(); ++j) {
+                cout<<Paths[i][j]<<" - ";
+            }
+            cout<<Paths[i][0]<<endl;
+        }
+    }
+
+
 
     Graph Astar(string startVertex, string endVertex){
         Graph<Node_type> ArbolMinimoRecorrido(this->GetIsDirected());
@@ -879,7 +1029,6 @@ public:
                 }
             }
         }
-
         return dist;
     }
 
@@ -894,7 +1043,6 @@ public:
                 cout << v.first << "\t\t" << "INF" << endl;
         }
     }
-
 
 
 };

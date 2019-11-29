@@ -54,12 +54,12 @@ void TestFloydWarshall(){
 void TestDijkstra(){
     Basic_Parser Parser_2("../json_files/tester_Dijkstra.json");
     auto Grafo__no_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
-    Grafo__no_dirigido->Dijkstra("A");
+    Grafo__no_dirigido->DijkstraGraph("A");
     cout<<endl;
 
     AirportParser nuevoGrafo2("../json_files/airports.json");
     auto grafoHeuristic2 = new Graph<Airport>(nuevoGrafo2.Generate_Graph());
-    grafoHeuristic2->Dijkstra("7252");
+    grafoHeuristic2->DijkstraGraph("7252");
     cout<<endl;
 
 }

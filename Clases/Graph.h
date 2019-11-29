@@ -735,7 +735,7 @@ public:
     }
 
 
-    vector<vector<double>> FloydWarshall(){
+    pair<vector<vector<string>>,vector<vector<double>>> FloydWarshall(){
         if (!IsDirected)
             throw std::invalid_argument("El algoritmo solo puede ser aplicado en grafos dirigidos");
 
@@ -744,26 +744,38 @@ public:
             keys.push_back(s.first);
 
         vector<vector<double>> dist;
+        vector<vector<string>> path;
         int n = Self.size();
         for (int i = 0; i < n; ++i) {
             vector<double> row;
+            vector<string> pr;
             dist.push_back(row);
+            path.push_back(pr);
             for (int j = 0; j < n; ++j) {
                 double value = Distance(keys[i],keys[j]);
                 dist[i].push_back(value);
+                if (value != INT32_MAX){
+                    path[i].emplace_back(keys[j]);
+                } else {
+                    path[i].emplace_back("N");
+                }
             }
         }
+
         for (int k = 0; k < n; ++k)
             for (int i = 0; i < n; ++i)
                 for (int j = 0; j < n; ++j) {
-                    if (dist[i][k] + dist[k][j] < dist[i][j])
+                    if (dist[i][k] + dist[k][j] < dist[i][j]){
                         dist[i][j] = dist[i][k] + dist[k][j];
+                        path[i][j] = keys[k];
+                    }
                 }
-        return dist;
-    }
 
+        return make_pair(path,dist);
+    }
     void PrintFloydWarshall() {
-        auto FWmtx = FloydWarshall();
+        auto FWmtx = FloydWarshall().first;
+        auto FWmtx2 = FloydWarshall().second;
         cout << "\\ \t";
         vector<string> keys;
         for (auto s : Self) {
@@ -775,10 +787,25 @@ public:
         for (int i = 0; i < n; ++i) {
             cout << "(" << keys[i] << ")\t";
             for (int j = 0; j < n; ++j) {
-                if (FWmtx[i][j] >= INT32_MAX or FWmtx[i][j]>= MAX) cout << "INF\t";
-                else cout << FWmtx[i][j] << "\t";
+                cout << FWmtx[i][j] << "\t";
             } cout << endl;
         }
+        cout<<"\n\n";
+
+        for (auto s : Self) {
+            keys.push_back(s.first);
+            cout << "(" << s.first << ")\t";
+        }
+        cout << endl;
+        for (int i = 0; i < n; ++i) {
+            cout << "(" << keys[i] << ")\t";
+            for (int j = 0; j < n; ++j) {
+                if (FWmtx2[i][j] >= INT32_MAX or FWmtx2[i][j]>= MAX) cout << "INF\t";
+                else
+                    cout << FWmtx2[i][j] << "\t";
+            } cout << endl;
+        }
+        cout << endl<<endl;
     }
 
     unordered_map <string,double> BellmanFord(const string& origen) {

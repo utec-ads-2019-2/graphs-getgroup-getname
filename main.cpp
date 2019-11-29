@@ -46,7 +46,7 @@ void TestBellmanFord(){
 }
 
 void TestFloydWarshall(){
-    Basic_Parser_D Parser_2("../json_files/FW2.json");
+    Basic_Parser_D Parser_2("../json_files/FW_Path.json");
     auto Grafo_dirigido=new Graph<String_class>(Parser_2.Generate_Graph());
     Grafo_dirigido->PrintFloydWarshall();
 }
